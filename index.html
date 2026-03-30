@@ -446,7 +446,6 @@
   .archive-price { font-size: 16px; font-weight: 800; color: var(--black); letter-spacing: -0.5px; }
   .archive-badge {
     font-size: 11px; font-weight: 700;
-    background: #DCFCE7; color: var(--green-dark);
     padding: 2px 8px; border-radius: var(--radius-full);
     display: inline-block; margin-top: 4px;
   }
@@ -509,6 +508,12 @@
   .spinner {
     border: 3px solid rgba(255,255,255,0.1);
     border-top: 3px solid var(--green);
+    border-radius: 50%; width: 40px; height: 40px;
+    animation: spin 0.8s linear infinite; margin-bottom: 14px;
+  }
+  .spinner-amber {
+    border: 3px solid rgba(245, 165, 36, 0.2);
+    border-top: 3px solid var(--amber);
     border-radius: 50%; width: 40px; height: 40px;
     animation: spin 0.8s linear infinite; margin-bottom: 14px;
   }
@@ -575,7 +580,7 @@
 
 <audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
 <audio id="sfx-create" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
-<audio id="sfx-process" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" preload="auto"></audio>
+<audio id="sfx-ringtone" src="https://cdn.jsdelivr.net/gh/w3teal/awesome-ringtone/Sony/2013%20-%20Original.mp3" preload="auto"></audio>
 <audio id="sfx-complete" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" preload="auto"></audio>
 
 <div id="loading-overlay">
@@ -650,7 +655,9 @@
         <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Driver">
       </div>
       <h3 style="font-size: 18px; margin-bottom: 4px;">Budi Santoso</h3>
-      <div style="font-size: 13px; color: var(--gray-500); font-weight: 600;">⭐ 4.9 Rating</div>
+      <div style="font-size: 13px; color: var(--gray-500); font-weight: 600; display:flex; align-items:center; justify-content:center; gap:4px;">
+        <span class="material-symbols-outlined" style="color:#F5A524; font-size:18px;">shield</span> Terpercaya
+      </div>
     </div>
     <div class="detail-grid">
       <div class="detail-row">
@@ -742,7 +749,7 @@
           <div id="f-pickup-loc-accuracy" class="d-none" style="font-size: 11px; margin-top: 6px; font-weight: 600;"></div>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
-          <label class="field-label">Nama Tempat / Patokan</label>
+          <label class="field-label">Nama Tempat / Patokan <span class="field-required">*</span></label>
           <input class="field" id="f-pickup-detail" type="text" placeholder="Detail Toko / Lokasi Pengambilan">
         </div>
       </div>
@@ -759,7 +766,7 @@
           <div id="f-delivery-loc-accuracy" class="d-none" style="font-size: 11px; margin-top: 6px; font-weight: 600;"></div>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
-          <label class="field-label">Nama Tempat / Patokan</label>
+          <label class="field-label">Nama Tempat / Patokan <span class="field-required">*</span></label>
           <input class="field" id="f-delivery-detail" type="text" placeholder="Detail Alamat Pengiriman">
         </div>
       </div>
@@ -767,7 +774,7 @@
       <div class="card">
         <div class="card-title"><span class="material-symbols-outlined">notes</span> Catatan & Waktu</div>
         <div class="field-wrap">
-          <label class="field-label">Catatan Pesanan</label>
+          <label class="field-label">Catatan Pesanan <span class="field-required">*</span></label>
           <textarea class="field" id="f-catatan" rows="2" placeholder="Cth: Tolong letakkan di teras, rumah warna hijau..."></textarea>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
@@ -825,7 +832,7 @@
     <div class="page" id="page-archive">
       <div class="page-header">
         <div class="page-title">Riwayat Selesai</div>
-        <div class="page-sub">Pesanan yang sudah selesai</div>
+        <div class="page-sub">Pesanan yang sudah selesai atau dibatalkan</div>
       </div>
       <div class="search-bar">
         <span class="material-symbols-outlined" style="color:var(--gray-400); font-size:20px;">search</span>
@@ -894,7 +901,7 @@
   window.activeOrdersData = [];
   window.historyOrdersData = [];
   let unsubscribeOrders = null;
-  let diprosesSet = new Set(); // Melacak order yang sedang diproses untuk memicu suara
+  let diprosesSet = new Set();
   
   window.currentOrderDist = null;
   window.currentOrderFare = null;
@@ -944,7 +951,6 @@
         currentUserData = snap.data();
         updateUserAvatarUI(currentUserData);
 
-        // Pre-fill data kontak saat pertama kali load
         document.getElementById('f-penerima-nama').value = currentUserData.name || '';
         document.getElementById('f-penerima-wa').value = currentUserData.phone || '';
         document.getElementById('f-pengirim-nama').value = currentUserData.name || '';
@@ -1097,7 +1103,6 @@
     currentUserData = null;
   }
 
-  // Modifikasi Modal Info Paham & Fetch GPS otomatis
   window.closeInfoModalAndFetchLoc = function() {
     document.getElementById('info-modal').classList.remove('open');
     if (selectedType === 'Kirim Instan') {
@@ -1135,7 +1140,7 @@
     const contPengirim = document.getElementById('container-pengirim');
 
     fPick.value = ''; fDeliv.value = '';
-    fPick.dataset.valid = "true"; fDeliv.dataset.valid = "true"; // reset status akurasi
+    fPick.dataset.valid = "true"; fDeliv.dataset.valid = "true";
     document.getElementById('f-pickup-loc-accuracy').classList.add('d-none');
     document.getElementById('f-delivery-loc-accuracy').classList.add('d-none');
 
@@ -1149,6 +1154,7 @@
       fDeliv.readOnly = true; fDeliv.placeholder = "Tekan tombol GPS disamping...";
       btnDelivMaps.classList.add('d-none'); btnDelivGps.classList.remove('d-none');
       contPenerima.classList.remove('d-none'); contPengirim.classList.add('d-none');
+      window.getLocation('f-delivery-loc');
     } else if (type === 'Ambil Instan') {
       iconPickup.textContent = 'home_pin'; 
       notice.innerHTML = '<strong>Pemberitahuan:</strong> Barang max 15 kg, PxLxT: 50x50x60 cm.';
@@ -1159,6 +1165,7 @@
       fDeliv.readOnly = true; fDeliv.placeholder = "Tekan tombol GPS disamping...";
       btnDelivMaps.classList.add('d-none'); btnDelivGps.classList.remove('d-none');
       contPenerima.classList.remove('d-none'); contPengirim.classList.add('d-none');
+      window.getLocation('f-delivery-loc');
     } else if (type === 'Kirim Instan') {
       iconPickup.textContent = 'storefront';
       notice.innerHTML = '<strong>Pemberitahuan:</strong> Barang max 15 kg, PxLxT: 50x50x60 cm.';
@@ -1169,6 +1176,7 @@
       fDeliv.readOnly = false; fDeliv.placeholder = "Masukkan Link Maps...";
       btnDelivMaps.classList.remove('d-none'); btnDelivGps.classList.add('d-none');
       contPenerima.classList.add('d-none'); contPengirim.classList.remove('d-none');
+      window.getLocation('f-pickup-loc');
     }
   }
 
@@ -1182,7 +1190,6 @@
 
   window.openGoogleMaps = function() { window.open('https://maps.google.com', '_blank'); }
 
-  // Modifikasi Location Fetch dengan Akurasi
   window.getLocation = function(targetId) {
     if (!navigator.geolocation) { showToast('GPS tidak didukung browser ini'); return; }
     showToast('Mencari lokasi akurat...');
@@ -1191,9 +1198,10 @@
       const acc = pos.coords.accuracy;
       let status = ''; let color = ''; let isValid = false;
 
+      // Akurasi Sedang (150) dan Lemah ditolak
       if (acc <= 15) { status = 'Sangat Tinggi'; color = 'var(--green-dark)'; isValid = true; }
       else if (acc <= 50) { status = 'Tinggi'; color = 'var(--green)'; isValid = true; }
-      else if (acc <= 150) { status = 'Sedang'; color = 'var(--amber)'; isValid = true; }
+      else if (acc <= 150) { status = 'Sedang'; color = 'var(--amber)'; isValid = false; }
       else { status = 'Lemah'; color = 'var(--red)'; isValid = false; }
 
       const inputElem = document.getElementById(targetId);
@@ -1207,7 +1215,7 @@
       }
 
       if (!isValid) {
-          showToast('Akurasi koordinat Lemah! Wajib cari tempat terbuka & coba tombol GPS lagi.');
+          showToast('Akurasi koordinat tidak memadai (Sedang/Lemah). Cari tempat terbuka & coba lagi.');
       } else {
           showToast('Titik koordinat berhasil didapatkan');
       }
@@ -1223,7 +1231,8 @@
     if (!isNaN(distKm) && distKm > 0) {
       let fare = 0;
       if (selectedType === 'Jastip resto/toko') {
-        if (distKm <= 2) fare = 8000;
+        if (distKm <= 1) fare = 6000;
+        else if (distKm <= 2) fare = 8000;
         else if (distKm <= 3) fare = 8000 + (Math.ceil((distKm - 2) * 20) * 100);
         else if (distKm <= 4) fare = 10000 + (Math.ceil((distKm - 3) * 20) * 100);
         else if (distKm <= 5) fare = 12000 + (Math.ceil((distKm - 4) * 20) * 200);
@@ -1249,7 +1258,7 @@
     let gpsInput = document.getElementById(activeGpsId);
     
     if (gpsInput.dataset.valid === "false") {
-      showToast('Akurasi koordinat GPS Lemah. Silakan perbarui titik lokasi Anda sebelum memesan.');
+      showToast('Akurasi koordinat GPS minimal harus Tinggi. Silakan perbarui titik lokasi Anda.');
       return;
     }
 
@@ -1269,8 +1278,8 @@
       contactWA = document.getElementById('f-penerima-wa').value.trim();
     }
 
-    if (!pickupLoc || !delivLoc || !contactName || !contactWA || window.currentOrderFare === null) { 
-      showToast('Harap lengkapi semua data wajib (*), termasuk Jarak Tempuh.'); return; 
+    if (!pickupLoc || !pickupDetail || !delivLoc || !delivDetail || !catatan || !contactName || !contactWA || window.currentOrderFare === null) { 
+      showToast('Harap lengkapi semua data wajib (*).'); return; 
     }
     if (window.waktuType === 'Jadwalkan' && !waktuJadwal) {
       showToast('Harap pilih jam dan tanggal jika memilih Jadwalkan.'); return;
@@ -1286,13 +1295,26 @@
         catatan: catatan, waktuTipe: window.waktuType, waktuJadwal: waktuJadwal,
         contactName: contactName, contactWA: contactWA,
         distanceKm: window.currentOrderDist, fare: window.currentOrderFare,
-        uploadedAt: new Date().toISOString(), uploader: currentUserUid, status: 'menunggu'
+        uploadedAt: new Date().toISOString(), uploader: currentUserUid, 
+        status: 'pending', pendingUntil: Date.now() + 20000 
       };
 
       const docRef = await addDoc(collection(db, "orders"), newOrder);
       document.getElementById('sfx-create').play().catch(e => console.log(e));
 
-      setTimeout(() => { updateDoc(docRef, { status: 'diproses' }).catch(e=>console.error(e)); }, 5000);
+      // Auto update status dari pending ke menunggu lalu diproses (Simulasi Server/Driver)
+      setTimeout(() => {
+         getDoc(docRef).then(snap => {
+            if(snap.exists() && snap.data().status === 'pending') {
+               updateDoc(docRef, { status: 'menunggu' });
+               setTimeout(() => {
+                 getDoc(docRef).then(s => {
+                   if(s.exists() && s.data().status === 'menunggu') updateDoc(docRef, { status: 'diproses' });
+                 });
+               }, 10000);
+            }
+         });
+      }, 20000);
 
       ['f-pickup-loc','f-pickup-detail','f-delivery-loc','f-delivery-detail','f-catatan','f-waktu-jadwal','f-penerima-nama','f-penerima-wa','f-pengirim-nama','f-pengirim-wa','f-distance'].forEach(id => {
          if (document.getElementById(id)) document.getElementById(id).value = '';
@@ -1304,7 +1326,7 @@
       gpsInput.dataset.valid = "true";
       window.setWaktu('Langsung'); 
       
-      hideLoading(); showToast('Pesanan Berhasil Disimpan');
+      hideLoading(); showToast('Pesanan Berhasil Dibuat');
       window.switchPage('proses');
     } catch (error) { hideLoading(); showToast('Gagal Simpan: ' + error.message); }
   }
@@ -1319,14 +1341,14 @@
       snapshot.forEach(doc => allOrders.push({id: doc.id, ...doc.data()}));
       allOrders.sort((a, b) => new Date(b.uploadedAt || 0) - new Date(a.uploadedAt || 0));
       
-      window.activeOrdersData = allOrders.filter(o => o.status !== 'selesai');
-      window.historyOrdersData = allOrders.filter(o => o.status === 'selesai');
+      window.activeOrdersData = allOrders.filter(o => o.status !== 'selesai' && o.status !== 'dibatalkan');
+      window.historyOrdersData = allOrders.filter(o => o.status === 'selesai' || o.status === 'dibatalkan');
       
-      // Mainkan suara jika ada perubahan status menjadi 'diproses'
+      // Ringtone aktif saat status pindah ke 'diproses' (Di Jalan)
       window.activeOrdersData.forEach(o => {
         if (o.status === 'diproses' && !diprosesSet.has(o.id)) {
             diprosesSet.add(o.id);
-            const audioProcess = document.getElementById('sfx-process');
+            const audioProcess = document.getElementById('sfx-ringtone');
             if(audioProcess) { audioProcess.currentTime = 0; audioProcess.play().catch(e => console.log(e)); }
         } else if (o.status !== 'diproses') {
             diprosesSet.delete(o.id);
@@ -1354,6 +1376,16 @@
      const textWA = `*Halo, mohon segera proses pesanan saya!*\nKategori: ${order.type}\nLokasi Pengambilan: ${order.pickupAddress} ${order.pickupDetail ? '('+order.pickupDetail+')' : ''}\nLokasi Pengiriman: ${order.deliveryAddress} ${order.deliveryDetail ? '('+order.deliveryDetail+')' : ''}\nCatatan: ${order.catatan || '-'}\nData Penerima: ${order.contactName} - ${order.contactWA}\nArgo: Rp ${(order.fare || 0).toLocaleString('id-ID')}\n\nTolong segera direspons, terima kasih!`;
      window.open('https://wa.me/6285138238914?text=' + encodeURIComponent(textWA), '_blank');
   }
+  
+  window.batalOrder = async function(id) {
+     if(!confirm('Yakin ingin membatalkan pesanan ini?')) return;
+     showLoading('Membatalkan...');
+     try {
+       await updateDoc(doc(db, "orders", id), { status: 'dibatalkan' });
+       showToast('Pesanan dibatalkan');
+     } catch(e) { showToast('Gagal membatalkan pesanan'); }
+     finally { hideLoading(); }
+  }
 
   window.renderProses = function() {
     const container = document.getElementById('proses-results');
@@ -1368,10 +1400,34 @@
 
     let htmlContent = '';
     window.activeOrdersData.forEach(o => {
-      let isDiproses = o.status === 'diproses';
+      let isPending = o.status === 'pending';
       let isMenunggu = o.status === 'menunggu';
+      let isDiproses = o.status === 'diproses';
+      
       const estimasiWaktu = (o.type === 'Jastip resto/toko') ? '45 Menit' : '30 Menit';
       const fillPct = isDiproses ? '65%' : '15%';
+
+      let pendingHtml = '';
+      let timelineHtml = '';
+
+      if (isPending) {
+         pendingHtml = `
+           <div class="pending-container" style="text-align:center; padding: 14px 0;">
+             <div class="spinner-amber" style="margin: 0 auto 10px;"></div>
+             <div style="font-size:14px; font-weight:600; color:var(--amber); margin-bottom:14px;">Membuat Pesanan... (<span class="pending-timer" data-until="${o.pendingUntil}">20</span>s)</div>
+             <button class="btn-secondary" style="border-color:var(--red); color:var(--red); padding:12px; margin:0;" onclick="window.batalOrder('${o.id}')">Batalkan Pesanan</button>
+           </div>
+         `;
+      } else {
+         timelineHtml = `
+            <div class="timeline-uber">
+              <div class="tl-track"><div class="tl-fill" style="width:${fillPct};"></div></div>
+              <div class="tl-step ${isMenunggu || isDiproses ? 'done' : 'active'}"><div class="tl-dot"><span class="material-symbols-outlined">schedule</span></div><div class="tl-label">Menunggu</div></div>
+              <div class="tl-step ${isDiproses ? 'active' : ''}"><div class="tl-dot"><span class="material-symbols-outlined">two_wheeler</span></div><div class="tl-label">Di Jalan</div></div>
+              <div class="tl-step"><div class="tl-dot"><span class="material-symbols-outlined">check_circle</span></div><div class="tl-label">Selesai</div></div>
+            </div>
+         `;
+      }
 
       htmlContent += `
         <div class="order-card" id="card-${o.id}">
@@ -1383,13 +1439,8 @@
             </div>
           </div>
           <div class="order-card-body">
-            <div class="timeline-uber">
-              <div class="tl-track"><div class="tl-fill" style="width:${fillPct};"></div></div>
-              <div class="tl-step ${isMenunggu ? 'active' : 'done'}"><div class="tl-dot"><span class="material-symbols-outlined">schedule</span></div><div class="tl-label">Menunggu</div></div>
-              <div class="tl-step ${isDiproses ? 'active' : ''}"><div class="tl-dot"><span class="material-symbols-outlined">two_wheeler</span></div><div class="tl-label">Di Jalan</div></div>
-              <div class="tl-step"><div class="tl-dot"><span class="material-symbols-outlined">check_circle</span></div><div class="tl-label">Selesai</div></div>
-            </div>
-            <button class="toggle-detail-btn" onclick="window.toggleDetail('${o.id}')">
+            ${isPending ? pendingHtml : timelineHtml}
+            <button class="toggle-detail-btn" onclick="window.toggleDetail('${o.id}')" style="margin-top: ${isPending ? '10px' : '0'};">
               <span id="icon-expand-${o.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span> Detail Pesanan
             </button>
           </div>
@@ -1397,7 +1448,12 @@
             ${isDiproses ? `
               <div class="driver-card" onclick="window.showDriverModal()">
                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Driver">
-                <div class="driver-info"><div class="driver-name">Budi Santoso</div><div class="driver-rating">⭐ 4.9 (120+ order)</div></div>
+                <div class="driver-info">
+                   <div class="driver-name">Budi Santoso</div>
+                   <div class="driver-rating" style="display:flex; align-items:center; gap:4px;">
+                      <span class="material-symbols-outlined" style="color:#F5A524; font-size:14px;">shield</span> Terpercaya
+                   </div>
+                </div>
                 <span class="material-symbols-outlined" style="color:var(--gray-400)">chevron_right</span>
               </div>
             ` : ''}
@@ -1428,6 +1484,12 @@
         const s = Math.floor((diff % 60000) / 1000);
         el.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} berlalu`;
     });
+    
+    document.querySelectorAll('.pending-timer').forEach(el => {
+        const until = parseInt(el.getAttribute('data-until'));
+        const diff = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+        el.textContent = diff;
+    });
   };
   setInterval(window.updateTimers, 1000);
 
@@ -1436,7 +1498,7 @@
     showLoading('Menyelesaikan pesanan...');
     try {
       await updateDoc(doc(db, "orders", id), { status: 'selesai' });
-      diprosesSet.delete(id); // bersihkan dari memori pemutar suara
+      diprosesSet.delete(id);
       const audioComplete = document.getElementById('sfx-complete');
       if(audioComplete) audioComplete.play().catch(e => console.log(e));
       showToast('Pesanan selesai & dipindahkan ke Riwayat');
@@ -1444,7 +1506,6 @@
     finally { hideLoading(); }
   }
 
-  // Modifikasi untuk Expand Detail History beserta Foto Bukti
   window.toggleArchiveDetail = function(id) {
     const detailElem = document.getElementById('arch-detail-' + id);
     const iconElem = document.getElementById('icon-arch-expand-' + id);
@@ -1468,6 +1529,10 @@
     let htmlContent = '';
     filtered.forEach(entry => {
       let iconType = entry.type === 'Kirim Instan' ? 'local_shipping' : (entry.type === 'Ambil Instan' ? 'home_pin' : 'storefront');
+      let isBatal = entry.status === 'dibatalkan';
+      
+      let badgeStyle = isBatal ? 'background:#FEE2E2; color:#DC2626;' : 'background:#DCFCE7; color:var(--green-dark);';
+      let badgeLabel = isBatal ? 'Dibatalkan' : 'Selesai';
       
       htmlContent += `
         <div class="archive-card" style="flex-direction:column; align-items:stretch;">
@@ -1479,7 +1544,7 @@
             </div>
             <div class="archive-right">
               <div class="archive-price">Rp ${(entry.fare || 0).toLocaleString('id-ID')}</div>
-              <div class="archive-badge">Selesai</div>
+              <div class="archive-badge" style="${badgeStyle}">${badgeLabel}</div>
             </div>
           </div>
           
@@ -1491,11 +1556,12 @@
           <div id="arch-detail-${entry.id}" class="d-none" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--gray-200); font-size:13px; color:var(--gray-600); line-height:1.6;">
              <p><strong>Alamat Ambil:</strong> ${entry.pickupDetail || entry.pickupAddress}</p>
              <p><strong>Alamat Antar:</strong> ${entry.deliveryDetail || entry.deliveryAddress}</p>
+             ${!isBatal ? `
              <p style="margin-top:8px;"><strong>Bukti Penyelesaian:</strong></p>
              <div style="display:flex; gap:8px; margin-top:4px;">
                 <a href="https://images.unsplash.com/photo-1620822607871-dd1a48c6f3d1" target="_blank" style="flex:1; background:var(--gray-100); text-align:center; padding:8px; border-radius:6px; color:var(--green-dark); text-decoration:none; font-weight:600; border:1px solid var(--gray-200);"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:16px;">image</span> Foto Barang</a>
-                <a href="https://images.unsplash.com/photo-1620822607871-dd1a48c6f3d1" target="_blank" style="flex:1; background:var(--gray-100); text-align:center; padding:8px; border-radius:6px; color:var(--green-dark); text-decoration:none; font-weight:600; border:1px solid var(--gray-200);"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:16px;">image</span> Foto Serah Terima</a>
-             </div>
+                <a href="https://images.unsplash.com/photo-1620822607871-dd1a48c6f3d1" target="_blank" style="flex:1; background:var(--gray-100); text-align:center; padding:8px; border-radius:6px; color:var(--green-dark); text-decoration:none; font-weight:600; border:1px solid var(--gray-200);"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:16px;">image</span> Foto Serah</a>
+             </div>` : ''}
           </div>
         </div>`;
     });
