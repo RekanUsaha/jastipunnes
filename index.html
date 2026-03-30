@@ -125,7 +125,6 @@
   }
   .field:disabled, .field[readonly] {
     background: var(--gray-100); color: var(--gray-400);
-    cursor: not-allowed;
   }
 
   /* ─── BUTTONS ─── */
@@ -341,7 +340,6 @@
     padding: 3px 8px; border-radius: var(--radius-full);
     display: inline-block; margin-top: 4px;
   }
-
   .order-card-body { padding: 18px; }
 
   /* ─── TIMELINE ─── */
@@ -387,9 +385,7 @@
     width: 100%; font-family: var(--font);
   }
 
-  .order-detail-panel {
-    border-top: 1px solid var(--gray-200); padding: 14px 18px 18px;
-  }
+  .order-detail-panel { border-top: 1px solid var(--gray-200); padding: 14px 18px 18px; }
   
   /* DRIVER CARD UI */
   .driver-card {
@@ -410,10 +406,7 @@
     padding: 14px; font-size: 13px; line-height: 1.7;
     color: var(--gray-600); font-weight: 500;
   }
-  .detail-row {
-    display: flex; justify-content: space-between;
-    margin-bottom: 4px;
-  }
+  .detail-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
   .detail-row:last-child { margin-bottom: 0; }
   .detail-key { color: var(--gray-400); }
   .detail-val { color: var(--black); font-weight: 600; text-align: right; max-width: 60%; }
@@ -502,9 +495,7 @@
     font-size: 14px; line-height: 1.5;
   }
   .info-list li:last-child { border-bottom: none; }
-  .info-list li .material-symbols-outlined {
-    font-size: 18px; color: var(--green); flex-shrink: 0; margin-top: 1px;
-  }
+  .info-list li .material-symbols-outlined { font-size: 18px; color: var(--green); flex-shrink: 0; margin-top: 1px; }
 
   /* ─── LOADING ─── */
   #loading-overlay {
@@ -536,15 +527,6 @@
   }
   #toast.show { display: flex; }
 
-  /* ─── ANIMATED STRIPES ─── */
-  .anim-flow {
-    background: repeating-linear-gradient(-45deg, var(--green) 0, var(--green) 10px, #04914D 10px, #04914D 20px);
-    background-size: 28px 28px;
-    animation: flow-stripes 1s linear infinite;
-  }
-  .solid-flow { background: var(--green); }
-  @keyframes flow-stripes { to { background-position: 28px 0; } }
-
   /* ─── WAKTU BUTTONS ─── */
   .waktu-btns { display: flex; gap: 8px; margin-bottom: 8px; }
   .btn-waktu {
@@ -555,24 +537,15 @@
     font-family: var(--font); font-size: 14px; font-weight: 600;
     cursor: pointer; color: var(--gray-500); transition: all 0.15s;
   }
-  .btn-waktu.active {
-    background: var(--black); border-color: var(--black);
-    color: var(--white);
-  }
+  .btn-waktu.active { background: var(--black); border-color: var(--black); color: var(--white); }
 
   /* ─── SECTION HEADER IN FORM ─── */
   .submit-area { padding: 16px; }
 
   /* ─── EMPTY STATE ─── */
-  .empty-state {
-    padding: 48px 24px; text-align: center;
-  }
-  .empty-state .material-symbols-outlined {
-    font-size: 48px; color: var(--gray-300); display: block; margin-bottom: 12px;
-  }
-  .empty-state p {
-    font-size: 15px; font-weight: 600; color: var(--gray-400);
-  }
+  .empty-state { padding: 48px 24px; text-align: center; }
+  .empty-state .material-symbols-outlined { font-size: 48px; color: var(--gray-300); display: block; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; font-weight: 600; color: var(--gray-400); }
 
   /* ─── PROFILE AVATAR BIG ─── */
   .avatar-big-wrap {
@@ -585,17 +558,12 @@
   .avatar-big-wrap img { width: 100%; height: 100%; object-fit: cover; }
 
   /* ─── INFO ROWS ─── */
-  .info-row {
-    display: flex; gap: 8px; margin-bottom: 10px;
-    align-items: flex-start;
-  }
-  .info-row .material-symbols-outlined {
-    font-size: 18px; color: var(--gray-400); flex-shrink: 0; margin-top: 1px;
-  }
+  .info-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: flex-start; }
+  .info-row .material-symbols-outlined { font-size: 18px; color: var(--gray-400); flex-shrink: 0; margin-top: 1px; }
   .info-row-text { font-size: 14px; font-weight: 500; color: var(--gray-600); line-height: 1.5; }
   .info-row-text strong { color: var(--black); }
 
-  /* ─── DARI FILE UTAMA (FAB & DANCING CHICKEN) ─── */
+  /* ─── FAB & DANCING CHICKEN ─── */
   .fab-wa { position: fixed; bottom: 80px; right: 16px; width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 99; color: white; text-decoration: none; }
   .fab-wa img { width: 32px; height: 32px; }
 
@@ -638,7 +606,7 @@
     <div class="info-row"><span class="material-symbols-outlined">location_on</span><div class="info-row-text"><strong>Area Layanan:</strong> Semarang</div></div>
     <div class="info-row"><span class="material-symbols-outlined">school</span><div class="info-row-text"><strong>Ketentuan Pengguna:</strong> Mahasiswa UNNES / Teman atau Keluarga Mahasiswa UNNES.</div></div>
     <div style="margin-top:20px;">
-      <button class="btn-primary" onclick="window.closeInfoModal()">Mengerti</button>
+      <button class="btn-primary" onclick="window.closeInfoModalAndFetchLoc()">Paham & Lanjutkan</button>
     </div>
   </div>
 </div>
@@ -704,26 +672,22 @@
   </div>
 </div>
 
-
 <div id="splash">
   <div class="splash-hero">
     <div class="splash-wordmark">Jastip<span>Unnes</span></div>
     <div class="splash-tagline">Sistem Manajemen Pengiriman & Titipan</div>
   </div>
-
   <div class="auth-sheet">
     <div class="auth-handle"></div>
     <div class="auth-tabs">
       <div class="auth-tab active" id="tab-login" onclick="window.switchAuth('login')">Masuk</div>
       <div class="auth-tab" id="tab-signup" onclick="window.switchAuth('signup')">Daftar</div>
     </div>
-
     <div id="auth-login-form">
       <div class="field-wrap"><input type="email" class="field" id="login-user" placeholder="Email" autocomplete="username"></div>
       <div class="field-wrap"><input type="password" class="field" id="login-pass" placeholder="Password" autocomplete="current-password"></div>
       <button class="btn-primary" onclick="window.doLogin()">Masuk</button>
     </div>
-
     <div id="auth-signup-form" class="d-none">
       <div class="field-wrap"><input type="text" class="field" id="signup-name" placeholder="Nama Lengkap"></div>
       <div class="field-wrap"><input type="number" class="field" id="signup-phone" placeholder="Nomor WhatsApp"></div>
@@ -731,9 +695,7 @@
       <div class="field-wrap"><input type="password" class="field" id="signup-pass" placeholder="Password (Min 6 karakter)"></div>
       <button class="btn-primary" onclick="window.doSignup()">Daftar Akun</button>
     </div>
-
     <div class="or-divider">ATAU</div>
-    
     <button class="btn-primary btn-google" onclick="window.doGoogleAuth()">
       <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"> Lanjutkan dengan Google
     </button>
@@ -750,7 +712,6 @@
   </div>
 
   <div class="content">
-
     <div class="page active" id="page-upload">
       <div class="page-header">
         <div class="page-title">Buat Pesanan</div>
@@ -774,10 +735,11 @@
         <div class="field-wrap">
           <label class="field-label" id="label-pickup">Link Maps <span class="field-required">*</span></label>
           <div style="display:flex; gap:8px;">
-            <input class="field" id="f-pickup-loc" type="text" placeholder="Masukkan Link Maps...">
+            <input class="field" id="f-pickup-loc" type="text" placeholder="Masukkan Link Maps..." data-valid="true">
             <button class="btn-primary" id="btn-pickup-maps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
             <button class="btn-primary d-none" id="btn-pickup-gps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);background:var(--gray-700);" onclick="window.getLocation('f-pickup-loc')"><span class="material-symbols-outlined">my_location</span></button>
           </div>
+          <div id="f-pickup-loc-accuracy" class="d-none" style="font-size: 11px; margin-top: 6px; font-weight: 600;"></div>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
           <label class="field-label">Nama Tempat / Patokan</label>
@@ -790,10 +752,11 @@
         <div class="field-wrap">
           <label class="field-label" id="label-delivery">Titik Koordinat <span class="field-required">*</span></label>
           <div style="display:flex; gap:8px;">
-            <input class="field" id="f-delivery-loc" type="text" placeholder="Tekan tombol GPS disamping..." readonly>
+            <input class="field" id="f-delivery-loc" type="text" placeholder="Tekan tombol GPS disamping..." readonly data-valid="true">
             <button class="btn-primary d-none" id="btn-delivery-maps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
             <button class="btn-primary" id="btn-delivery-gps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);background:var(--gray-700);" onclick="window.getLocation('f-delivery-loc')"><span class="material-symbols-outlined">my_location</span></button>
           </div>
+          <div id="f-delivery-loc-accuracy" class="d-none" style="font-size: 11px; margin-top: 6px; font-weight: 600;"></div>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
           <label class="field-label">Nama Tempat / Patokan</label>
@@ -839,9 +802,7 @@
           </div>
         </div>
         <div class="fare-display" style="margin-top:14px;">
-          <div>
-            <div class="fare-label">Total Argo / Tarif</div>
-          </div>
+          <div><div class="fare-label">Total Argo / Tarif</div></div>
           <strong id="display-fare" class="fare-amount">Rp 0</strong>
         </div>
       </div>
@@ -933,15 +894,14 @@
   window.activeOrdersData = [];
   window.historyOrdersData = [];
   let unsubscribeOrders = null;
+  let diprosesSet = new Set(); // Melacak order yang sedang diproses untuk memicu suara
   
   window.currentOrderDist = null;
   window.currentOrderFare = null;
   window.tempAvatarData = null;
   window.isRegistering = false; 
   window.waktuType = 'Langsung';
-  let hasPlayedProcessSound = false; 
 
-  // --- AUDIO LISTENER GLOBAL UNTUK TOMBOL ---
   document.addEventListener('click', function(e) {
     const isClickable = e.target.closest('.chip, .nav-item, .auth-tab, .order-card-header, .btn-primary, .btn-secondary, .btn-green, .icon-btn, .btn-waktu, .driver-card');
     if (isClickable || e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
@@ -983,6 +943,12 @@
       if (snap.exists() && snap.data().phone) {
         currentUserData = snap.data();
         updateUserAvatarUI(currentUserData);
+
+        // Pre-fill data kontak saat pertama kali load
+        document.getElementById('f-penerima-nama').value = currentUserData.name || '';
+        document.getElementById('f-penerima-wa').value = currentUserData.phone || '';
+        document.getElementById('f-pengirim-nama').value = currentUserData.name || '';
+        document.getElementById('f-pengirim-wa').value = currentUserData.phone || '';
         
         document.getElementById('splash').classList.add('hidden');
         document.getElementById('complete-profile-modal').classList.remove('open');
@@ -994,7 +960,6 @@
         document.getElementById('complete-profile-modal').classList.add('open');
       }
     } catch (e) {
-      console.error(e);
       showToast('Gagal memuat profil: ' + e.message);
     }
   }
@@ -1013,7 +978,6 @@
     document.getElementById('tab-signup').classList.remove('active');
     document.getElementById('auth-login-form').classList.add('d-none');
     document.getElementById('auth-signup-form').classList.add('d-none');
-    
     document.getElementById('tab-' + mode).classList.add('active');
     document.getElementById('auth-' + mode + '-form').classList.remove('d-none');
   }
@@ -1026,9 +990,8 @@
     try {
       await signInWithEmailAndPassword(auth, email, p);
       showToast('Login Berhasil');
-    } catch (error) {
-      showToast('Login Gagal: ' + error.message);
-    } finally { hideLoading(); }
+    } catch (error) { showToast('Login Gagal: ' + error.message); } 
+    finally { hideLoading(); }
   }
 
   window.doSignup = async function() {
@@ -1044,16 +1007,12 @@
     window.isRegistering = true; 
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, p);
-      await setDoc(doc(db, "users", cred.user.uid), {
-         name: name, phone: phone, email: email, avatar: ''
-      });
+      await setDoc(doc(db, "users", cred.user.uid), { name: name, phone: phone, email: email, avatar: '' });
       window.isRegistering = false; 
       await checkUserProfile(cred.user); 
       showToast('Pendaftaran Berhasil');
-    } catch (error) {
-      window.isRegistering = false;
-      showToast('Daftar Gagal: ' + error.message);
-    } finally { hideLoading(); }
+    } catch (error) { window.isRegistering = false; showToast('Daftar Gagal: ' + error.message); } 
+    finally { hideLoading(); }
   }
 
   window.doGoogleAuth = async function() {
@@ -1061,9 +1020,7 @@
       showLoading('Membuka Google...');
       await signInWithPopup(auth, googleProvider);
     } catch(error) {
-      if(error.code !== 'auth/popup-closed-by-user') {
-          showToast('Google Auth Gagal: ' + error.message);
-      }
+      if(error.code !== 'auth/popup-closed-by-user') showToast('Google Auth Gagal: ' + error.message);
     } finally { hideLoading(); }
   }
 
@@ -1074,15 +1031,12 @@
     
     showLoading("Menyimpan...");
     try {
-      await setDoc(doc(db, "users", currentUserUid), {
-         name: name, phone: phone, email: currentUserEmail, avatar: ''
-      }, {merge: true});
+      await setDoc(doc(db, "users", currentUserUid), { name: name, phone: phone, email: currentUserEmail, avatar: '' }, {merge: true});
       document.getElementById('complete-profile-modal').classList.remove('open');
       await checkUserProfile(auth.currentUser);
       showToast('Profil dilengkapi');
-    } catch(e) {
-      showToast(e.message);
-    } finally { hideLoading(); }
+    } catch(e) { showToast(e.message); } 
+    finally { hideLoading(); }
   }
 
   window.openProfileModal = function() {
@@ -1094,21 +1048,16 @@
     const previewText = document.getElementById('prof-preview-text');
     
     if (currentUserData.avatar) {
-      previewImg.src = currentUserData.avatar;
-      previewImg.style.display = 'block';
-      previewText.style.display = 'none';
+      previewImg.src = currentUserData.avatar; previewImg.style.display = 'block'; previewText.style.display = 'none';
     } else {
-      previewImg.style.display = 'none';
-      previewText.style.display = 'block';
+      previewImg.style.display = 'none'; previewText.style.display = 'block';
       previewText.innerText = currentUserData.name ? currentUserData.name[0].toUpperCase() : 'U';
     }
-    
     window.tempAvatarData = null;
     document.getElementById('profile-modal').classList.add('open');
   }
 
   window.closeProfileModal = function() { document.getElementById('profile-modal').classList.remove('open'); }
-  
   window.showDriverModal = function() { document.getElementById('driver-modal').classList.add('open'); }
   window.closeDriverModal = function() { document.getElementById('driver-modal').classList.remove('open'); }
 
@@ -1118,8 +1067,7 @@
     const reader = new FileReader();
     reader.onload = function(e) {
       const previewImg = document.getElementById('prof-preview-img');
-      previewImg.src = e.target.result;
-      previewImg.style.display = 'block';
+      previewImg.src = e.target.result; previewImg.style.display = 'block';
       document.getElementById('prof-preview-text').style.display = 'none';
       window.tempAvatarData = e.target.result;
     }
@@ -1134,34 +1082,35 @@
     showLoading("Memperbarui Profil...");
     try {
       let finalAvatar = window.tempAvatarData !== null ? window.tempAvatarData : currentUserData.avatar;
-      await updateDoc(doc(db, "users", currentUserUid), {
-        name: name, phone: phone, avatar: finalAvatar
-      });
-      currentUserData.name = name;
-      currentUserData.phone = phone;
-      currentUserData.avatar = finalAvatar;
+      await updateDoc(doc(db, "users", currentUserUid), { name: name, phone: phone, avatar: finalAvatar });
+      currentUserData.name = name; currentUserData.phone = phone; currentUserData.avatar = finalAvatar;
       updateUserAvatarUI(currentUserData);
       window.closeProfileModal();
       showToast("Profil diperbarui");
-    } catch(e) {
-      showToast("Gagal update profil");
-    } finally { hideLoading(); }
+    } catch(e) { showToast("Gagal update profil"); } 
+    finally { hideLoading(); }
   }
 
   window.doLogout = function() {
     signOut(auth);
-    document.getElementById('login-user').value = '';
-    document.getElementById('login-pass').value = '';
+    document.getElementById('login-user').value = ''; document.getElementById('login-pass').value = '';
     currentUserData = null;
   }
 
-  window.closeInfoModal = function() { document.getElementById('info-modal').classList.remove('open'); }
+  // Modifikasi Modal Info Paham & Fetch GPS otomatis
+  window.closeInfoModalAndFetchLoc = function() {
+    document.getElementById('info-modal').classList.remove('open');
+    if (selectedType === 'Kirim Instan') {
+        window.getLocation('f-pickup-loc');
+    } else {
+        window.getLocation('f-delivery-loc');
+    }
+  }
 
   window.switchPage = function(p) {
     document.querySelectorAll('.page, .nav-item').forEach(x => x.classList.remove('active'));
     document.getElementById('page-' + p).classList.add('active');
     document.getElementById('nav-' + p).classList.add('active');
-    
     if(p === 'proses') window.renderProses();
     if(p === 'archive') window.renderArchive();
   }
@@ -1186,6 +1135,9 @@
     const contPengirim = document.getElementById('container-pengirim');
 
     fPick.value = ''; fDeliv.value = '';
+    fPick.dataset.valid = "true"; fDeliv.dataset.valid = "true"; // reset status akurasi
+    document.getElementById('f-pickup-loc-accuracy').classList.add('d-none');
+    document.getElementById('f-delivery-loc-accuracy').classList.add('d-none');
 
     if (type === 'Jastip resto/toko') {
       iconPickup.textContent = 'storefront';
@@ -1197,7 +1149,6 @@
       fDeliv.readOnly = true; fDeliv.placeholder = "Tekan tombol GPS disamping...";
       btnDelivMaps.classList.add('d-none'); btnDelivGps.classList.remove('d-none');
       contPenerima.classList.remove('d-none'); contPengirim.classList.add('d-none');
-
     } else if (type === 'Ambil Instan') {
       iconPickup.textContent = 'home_pin'; 
       notice.innerHTML = '<strong>Pemberitahuan:</strong> Barang max 15 kg, PxLxT: 50x50x60 cm.';
@@ -1208,7 +1159,6 @@
       fDeliv.readOnly = true; fDeliv.placeholder = "Tekan tombol GPS disamping...";
       btnDelivMaps.classList.add('d-none'); btnDelivGps.classList.remove('d-none');
       contPenerima.classList.remove('d-none'); contPengirim.classList.add('d-none');
-
     } else if (type === 'Kirim Instan') {
       iconPickup.textContent = 'storefront';
       notice.innerHTML = '<strong>Pemberitahuan:</strong> Barang max 15 kg, PxLxT: 50x50x60 cm.';
@@ -1224,29 +1174,46 @@
 
   window.setWaktu = function(waktu) {
     window.waktuType = waktu;
-    const btnL = document.getElementById('btn-langsung');
-    const btnJ = document.getElementById('btn-jadwal');
-    const inJ = document.getElementById('f-waktu-jadwal');
-    
-    btnL.classList.toggle('active', waktu === 'Langsung');
-    btnJ.classList.toggle('active', waktu === 'Jadwalkan');
-    
-    if(waktu === 'Langsung') {
-      inJ.classList.add('d-none');
-    } else {
-      inJ.classList.remove('d-none');
-    }
+    document.getElementById('btn-langsung').classList.toggle('active', waktu === 'Langsung');
+    document.getElementById('btn-jadwal').classList.toggle('active', waktu === 'Jadwalkan');
+    if(waktu === 'Langsung') document.getElementById('f-waktu-jadwal').classList.add('d-none');
+    else document.getElementById('f-waktu-jadwal').classList.remove('d-none');
   }
 
   window.openGoogleMaps = function() { window.open('https://maps.google.com', '_blank'); }
 
+  // Modifikasi Location Fetch dengan Akurasi
   window.getLocation = function(targetId) {
     if (!navigator.geolocation) { showToast('GPS tidak didukung browser ini'); return; }
-    showToast('Mencari lokasi...');
+    showToast('Mencari lokasi akurat...');
+    
     navigator.geolocation.getCurrentPosition(pos => {
-      document.getElementById(targetId).value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
-      showToast('Titik koordinat didapatkan');
-    }, () => { showToast('Gagal Akses GPS, pastikan izin diaktifkan.'); });
+      const acc = pos.coords.accuracy;
+      let status = ''; let color = ''; let isValid = false;
+
+      if (acc <= 15) { status = 'Sangat Tinggi'; color = 'var(--green-dark)'; isValid = true; }
+      else if (acc <= 50) { status = 'Tinggi'; color = 'var(--green)'; isValid = true; }
+      else if (acc <= 150) { status = 'Sedang'; color = 'var(--amber)'; isValid = true; }
+      else { status = 'Lemah'; color = 'var(--red)'; isValid = false; }
+
+      const inputElem = document.getElementById(targetId);
+      inputElem.value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+      inputElem.dataset.valid = isValid;
+
+      const accDiv = document.getElementById(targetId + '-accuracy');
+      if (accDiv) {
+          accDiv.innerHTML = `Akurasi GPS: <strong style="color:${color}">${status}</strong> (±${Math.round(acc)}m)`;
+          accDiv.classList.remove('d-none');
+      }
+
+      if (!isValid) {
+          showToast('Akurasi koordinat Lemah! Wajib cari tempat terbuka & coba tombol GPS lagi.');
+      } else {
+          showToast('Titik koordinat berhasil didapatkan');
+      }
+    }, () => { 
+      showToast('Gagal Akses GPS, pastikan izin diaktifkan.'); 
+    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 });
   }
 
   window.calculateArgoManual = function() {
@@ -1256,31 +1223,36 @@
     if (!isNaN(distKm) && distKm > 0) {
       let fare = 0;
       if (selectedType === 'Jastip resto/toko') {
-        if (distKm <= 2) { fare = 8000; }
-        else if (distKm <= 3) { fare = 8000 + (Math.ceil((distKm - 2) * 20) * 100); }
-        else if (distKm <= 4) { fare = 10000 + (Math.ceil((distKm - 3) * 20) * 100); }
-        else if (distKm <= 5) { fare = 12000 + (Math.ceil((distKm - 4) * 20) * 200); }
-        else { fare = 12000 + (Math.ceil((distKm - 5) * 20) * 130); }
+        if (distKm <= 2) fare = 8000;
+        else if (distKm <= 3) fare = 8000 + (Math.ceil((distKm - 2) * 20) * 100);
+        else if (distKm <= 4) fare = 10000 + (Math.ceil((distKm - 3) * 20) * 100);
+        else if (distKm <= 5) fare = 12000 + (Math.ceil((distKm - 4) * 20) * 200);
+        else fare = 12000 + (Math.ceil((distKm - 5) * 20) * 130);
       } else {
-        if (distKm <= 1) { fare = 4300; }
-        else if (distKm <= 2) { fare = 4300 + (Math.ceil((distKm - 1) * 20) * 85); }
-        else if (distKm <= 3) { fare = 6000 + (Math.ceil((distKm - 2) * 20) * 50); }
-        else if (distKm <= 4) { fare = 7000 + (Math.ceil((distKm - 3) * 20) * 150); }
-        else if (distKm <= 5) { fare = 10000 + (Math.ceil((distKm - 4) * 20) * 100); }
-        else { fare = 12000 + (Math.ceil((distKm - 5) * 20) * 125); }
+        if (distKm <= 1) fare = 4300;
+        else if (distKm <= 2) fare = 4300 + (Math.ceil((distKm - 1) * 20) * 85);
+        else if (distKm <= 3) fare = 6000 + (Math.ceil((distKm - 2) * 20) * 50);
+        else if (distKm <= 4) fare = 7000 + (Math.ceil((distKm - 3) * 20) * 150);
+        else if (distKm <= 5) fare = 10000 + (Math.ceil((distKm - 4) * 20) * 100);
+        else fare = 12000 + (Math.ceil((distKm - 5) * 20) * 125);
       }
-
-      window.currentOrderDist = distKm;
-      window.currentOrderFare = Math.round(fare);
+      window.currentOrderDist = distKm; window.currentOrderFare = Math.round(fare);
       document.getElementById('display-fare').textContent = 'Rp ' + window.currentOrderFare.toLocaleString('id-ID');
     } else {
-      window.currentOrderDist = null;
-      window.currentOrderFare = null;
+      window.currentOrderDist = null; window.currentOrderFare = null;
       document.getElementById('display-fare').textContent = 'Rp 0';
     }
   };
 
   window.doUpload = async function() {
+    let activeGpsId = selectedType === 'Kirim Instan' ? 'f-pickup-loc' : 'f-delivery-loc';
+    let gpsInput = document.getElementById(activeGpsId);
+    
+    if (gpsInput.dataset.valid === "false") {
+      showToast('Akurasi koordinat GPS Lemah. Silakan perbarui titik lokasi Anda sebelum memesan.');
+      return;
+    }
+
     const pickupLoc = document.getElementById('f-pickup-loc').value.trim();
     const pickupDetail = document.getElementById('f-pickup-detail').value.trim();
     const delivLoc = document.getElementById('f-delivery-loc').value.trim();
@@ -1308,27 +1280,17 @@
     
     try {
       const newOrder = {
-        orderNo: "JSTP-" + Date.now().toString().slice(-6),
-        type: selectedType,
-        pickupAddress: pickupLoc,
-        pickupDetail: pickupDetail,
-        deliveryAddress: delivLoc,
-        deliveryDetail: delivDetail,
-        catatan: catatan,
-        waktuTipe: window.waktuType,
-        waktuJadwal: waktuJadwal,
-        contactName: contactName,
-        contactWA: contactWA,
-        distanceKm: window.currentOrderDist,
-        fare: window.currentOrderFare,
-        uploadedAt: new Date().toISOString(),
-        uploader: currentUserUid,
-        status: 'menunggu'
+        orderNo: "JSTP-" + Date.now().toString().slice(-6), type: selectedType,
+        pickupAddress: pickupLoc, pickupDetail: pickupDetail,
+        deliveryAddress: delivLoc, deliveryDetail: delivDetail,
+        catatan: catatan, waktuTipe: window.waktuType, waktuJadwal: waktuJadwal,
+        contactName: contactName, contactWA: contactWA,
+        distanceKm: window.currentOrderDist, fare: window.currentOrderFare,
+        uploadedAt: new Date().toISOString(), uploader: currentUserUid, status: 'menunggu'
       };
 
       const docRef = await addDoc(collection(db, "orders"), newOrder);
-      
-      document.getElementById('sfx-create').play().catch(e => console.log('Autoplay ditahan browser', e));
+      document.getElementById('sfx-create').play().catch(e => console.log(e));
 
       setTimeout(() => { updateDoc(docRef, { status: 'diproses' }).catch(e=>console.error(e)); }, 5000);
 
@@ -1337,22 +1299,19 @@
       });
       window.currentOrderDist = null; window.currentOrderFare = null;
       document.getElementById('display-fare').textContent = 'Rp 0';
+      document.getElementById('f-pickup-loc-accuracy').classList.add('d-none');
+      document.getElementById('f-delivery-loc-accuracy').classList.add('d-none');
+      gpsInput.dataset.valid = "true";
       window.setWaktu('Langsung'); 
       
-      hideLoading();
-      showToast('Pesanan Berhasil Disimpan');
+      hideLoading(); showToast('Pesanan Berhasil Disimpan');
       window.switchPage('proses');
-
-    } catch (error) {
-      hideLoading();
-      showToast('Gagal Simpan: ' + error.message);
-    }
+    } catch (error) { hideLoading(); showToast('Gagal Simpan: ' + error.message); }
   }
 
   function subscribeOrders() {
     if(unsubscribeOrders) unsubscribeOrders();
     if(!currentUserUid) return;
-
     const q = query(collection(db, "orders"), where("uploader", "==", currentUserUid));
     
     unsubscribeOrders = onSnapshot(q, (snapshot) => {
@@ -1363,6 +1322,17 @@
       window.activeOrdersData = allOrders.filter(o => o.status !== 'selesai');
       window.historyOrdersData = allOrders.filter(o => o.status === 'selesai');
       
+      // Mainkan suara jika ada perubahan status menjadi 'diproses'
+      window.activeOrdersData.forEach(o => {
+        if (o.status === 'diproses' && !diprosesSet.has(o.id)) {
+            diprosesSet.add(o.id);
+            const audioProcess = document.getElementById('sfx-process');
+            if(audioProcess) { audioProcess.currentTime = 0; audioProcess.play().catch(e => console.log(e)); }
+        } else if (o.status !== 'diproses') {
+            diprosesSet.delete(o.id);
+        }
+      });
+
       if(document.getElementById('page-proses').classList.contains('active')) window.renderProses();
       if(document.getElementById('page-archive').classList.contains('active')) window.renderArchive();
     }, (error) => { console.error("Gagal menarik data pesanan:", error); });
@@ -1372,11 +1342,9 @@
      const detailElem = document.getElementById('detail-' + id);
      const iconElem = document.getElementById('icon-expand-' + id);
      if (detailElem.classList.contains('d-none')) {
-         detailElem.classList.remove('d-none');
-         iconElem.textContent = 'expand_less';
+         detailElem.classList.remove('d-none'); iconElem.textContent = 'expand_less';
      } else {
-         detailElem.classList.add('d-none');
-         iconElem.textContent = 'expand_more';
+         detailElem.classList.add('d-none'); iconElem.textContent = 'expand_more';
      }
   }
 
@@ -1393,20 +1361,10 @@
     
     if(window.activeOrdersData.length === 0) {
       container.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">inbox</span><p>Tidak ada pesanan yang sedang diproses.</p></div>`;
-      dancingGif.style.display = 'none';
-      hasPlayedProcessSound = false;
-      return;
+      dancingGif.style.display = 'none'; return;
     }
 
     dancingGif.style.display = 'block';
-    
-    // Suara Proses jika pesanan ada dan belum dimainkan
-    const adaDiproses = window.activeOrdersData.some(o => o.status === 'diproses');
-    if (adaDiproses && !hasPlayedProcessSound) {
-      const audioProcess = document.getElementById('sfx-process');
-      if(audioProcess) audioProcess.play().catch(e => console.log(e));
-      hasPlayedProcessSound = true;
-    }
 
     let htmlContent = '';
     window.activeOrdersData.forEach(o => {
@@ -1418,108 +1376,56 @@
       htmlContent += `
         <div class="order-card" id="card-${o.id}">
           <div class="order-card-header" onclick="window.toggleDetail('${o.id}')">
-            <div>
-              <div class="order-card-num">${o.orderNo}</div>
-              <div class="order-card-type">${o.type}</div>
-            </div>
+            <div><div class="order-card-num">${o.orderNo}</div><div class="order-card-type">${o.type}</div></div>
             <div class="order-card-right">
               <div class="order-timer-pill order-timer" data-time="${o.uploadedAt}">00:00 berlalu</div>
               <div class="est-pill">Est: ${estimasiWaktu}</div>
             </div>
           </div>
-
           <div class="order-card-body">
             <div class="timeline-uber">
-              <div class="tl-track">
-                <div class="tl-fill" style="width:${fillPct};"></div>
-              </div>
-              <div class="tl-step ${isMenunggu ? 'active' : 'done'}">
-                <div class="tl-dot"><span class="material-symbols-outlined">schedule</span></div>
-                <div class="tl-label">Menunggu</div>
-              </div>
-              <div class="tl-step ${isDiproses ? 'active' : ''}">
-                <div class="tl-dot"><span class="material-symbols-outlined">two_wheeler</span></div>
-                <div class="tl-label">Di Jalan</div>
-              </div>
-              <div class="tl-step">
-                <div class="tl-dot"><span class="material-symbols-outlined">check_circle</span></div>
-                <div class="tl-label">Selesai</div>
-              </div>
+              <div class="tl-track"><div class="tl-fill" style="width:${fillPct};"></div></div>
+              <div class="tl-step ${isMenunggu ? 'active' : 'done'}"><div class="tl-dot"><span class="material-symbols-outlined">schedule</span></div><div class="tl-label">Menunggu</div></div>
+              <div class="tl-step ${isDiproses ? 'active' : ''}"><div class="tl-dot"><span class="material-symbols-outlined">two_wheeler</span></div><div class="tl-label">Di Jalan</div></div>
+              <div class="tl-step"><div class="tl-dot"><span class="material-symbols-outlined">check_circle</span></div><div class="tl-label">Selesai</div></div>
             </div>
-
             <button class="toggle-detail-btn" onclick="window.toggleDetail('${o.id}')">
-              <span id="icon-expand-${o.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
-              Detail Pesanan
+              <span id="icon-expand-${o.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span> Detail Pesanan
             </button>
           </div>
-
           <div id="detail-${o.id}" class="order-detail-panel d-none">
-            
             ${isDiproses ? `
               <div class="driver-card" onclick="window.showDriverModal()">
                 <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Driver">
-                <div class="driver-info">
-                  <div class="driver-name">Budi Santoso</div>
-                  <div class="driver-rating">⭐ 4.9 (120+ order)</div>
-                </div>
+                <div class="driver-info"><div class="driver-name">Budi Santoso</div><div class="driver-rating">⭐ 4.9 (120+ order)</div></div>
                 <span class="material-symbols-outlined" style="color:var(--gray-400)">chevron_right</span>
               </div>
             ` : ''}
-
             <div class="detail-grid">
-              <div class="detail-row">
-                <span class="detail-key">Argo/Biaya</span>
-                <span class="detail-val" style="color:var(--green);font-size:16px;">Rp ${(o.fare || 0).toLocaleString('id-ID')}</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-key">Kontak</span>
-                <span class="detail-val">${o.contactName} (${o.contactWA})</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-key">Ambil</span>
-                <span class="detail-val">${o.pickupDetail || o.pickupAddress}</span>
-              </div>
-              <div class="detail-row">
-                <span class="detail-key">Antar</span>
-                <span class="detail-val">${o.deliveryDetail || o.deliveryAddress}</span>
-              </div>
+              <div class="detail-row"><span class="detail-key">Argo/Biaya</span><span class="detail-val" style="color:var(--green);font-size:16px;">Rp ${(o.fare || 0).toLocaleString('id-ID')}</span></div>
+              <div class="detail-row"><span class="detail-key">Kontak</span><span class="detail-val">${o.contactName} (${o.contactWA})</span></div>
+              <div class="detail-row"><span class="detail-key">Ambil</span><span class="detail-val">${o.pickupDetail || o.pickupAddress}</span></div>
+              <div class="detail-row"><span class="detail-key">Antar</span><span class="detail-val">${o.deliveryDetail || o.deliveryAddress}</span></div>
               ${o.catatan ? `<div class="detail-row"><span class="detail-key">Catatan</span><span class="detail-val">${o.catatan}</span></div>` : ''}
             </div>
-
             <div class="action-btns-grid">
-              ${isMenunggu ? `
-                <button class="btn-green" onclick="window.ingatkanDriver('${o.id}')">
-                  <span class="material-symbols-outlined">notifications_active</span> Ingatkan Driver (WA)
-                </button>
-              ` : ''}
-              ${isDiproses ? `
-                <a href="https://wa.me/6285138238914" target="_blank" class="btn-green">
-                  <span class="material-symbols-outlined">chat</span> Hubungi Driver
-                </a>
-              ` : ''}
-              <button class="btn-primary" onclick="window.selesaiOrder('${o.id}')" ${!isDiproses ? 'disabled title="Menunggu driver"' : ''}>
-                <span class="material-symbols-outlined">task_alt</span> Konfirmasi Pesanan Selesai
-              </button>
+              ${isMenunggu ? `<button class="btn-green" onclick="window.ingatkanDriver('${o.id}')"><span class="material-symbols-outlined">notifications_active</span> Ingatkan Driver (WA)</button>` : ''}
+              ${isDiproses ? `<a href="https://wa.me/6285138238914" target="_blank" class="btn-green"><span class="material-symbols-outlined">chat</span> Hubungi Driver</a>` : ''}
+              <button class="btn-primary" onclick="window.selesaiOrder('${o.id}')" ${!isDiproses ? 'disabled title="Menunggu driver"' : ''}><span class="material-symbols-outlined">task_alt</span> Konfirmasi Pesanan Selesai</button>
             </div>
           </div>
         </div>
       `;
     });
-    
-    container.innerHTML = htmlContent;
-    window.updateTimers(); 
+    container.innerHTML = htmlContent; window.updateTimers(); 
   }
 
-  // Waktu Berjalan
   window.updateTimers = function() {
     document.querySelectorAll('.order-timer').forEach(el => {
         const startTime = new Date(el.getAttribute('data-time')).getTime();
-        const now = new Date().getTime();
-        const diff = Math.max(0, now - startTime);
-        
+        const diff = Math.max(0, new Date().getTime() - startTime);
         const m = Math.floor(diff / 60000);
         const s = Math.floor((diff % 60000) / 1000);
-        
         el.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} berlalu`;
     });
   };
@@ -1530,16 +1436,22 @@
     showLoading('Menyelesaikan pesanan...');
     try {
       await updateDoc(doc(db, "orders", id), { status: 'selesai' });
-      // Mainkan suara sukses selesai
+      diprosesSet.delete(id); // bersihkan dari memori pemutar suara
       const audioComplete = document.getElementById('sfx-complete');
       if(audioComplete) audioComplete.play().catch(e => console.log(e));
-      
       showToast('Pesanan selesai & dipindahkan ke Riwayat');
-    } catch(e) { 
-      console.error(e);
-      showToast('Gagal mengubah status pesanan');
-    } finally {
-      hideLoading();
+    } catch(e) { showToast('Gagal mengubah status pesanan'); } 
+    finally { hideLoading(); }
+  }
+
+  // Modifikasi untuk Expand Detail History beserta Foto Bukti
+  window.toggleArchiveDetail = function(id) {
+    const detailElem = document.getElementById('arch-detail-' + id);
+    const iconElem = document.getElementById('icon-arch-expand-' + id);
+    if (detailElem.classList.contains('d-none')) {
+        detailElem.classList.remove('d-none'); iconElem.textContent = 'expand_less';
+    } else {
+        detailElem.classList.add('d-none'); iconElem.textContent = 'expand_more';
     }
   }
 
@@ -1550,8 +1462,7 @@
     let filtered = window.historyOrdersData.filter(e => e.contactName && e.contactName.toLowerCase().includes(searchVal));
 
     if (!filtered.length) { 
-       results.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">receipt_long</span><p>Tidak ada riwayat ditemukan.</p></div>`;
-       return; 
+       results.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">receipt_long</span><p>Tidak ada riwayat ditemukan.</p></div>`; return; 
     }
 
     let htmlContent = '';
@@ -1559,17 +1470,32 @@
       let iconType = entry.type === 'Kirim Instan' ? 'local_shipping' : (entry.type === 'Ambil Instan' ? 'home_pin' : 'storefront');
       
       htmlContent += `
-        <div class="archive-card">
-          <div class="archive-icon-wrap">
-            <span class="material-symbols-outlined">${iconType}</span>
+        <div class="archive-card" style="flex-direction:column; align-items:stretch;">
+          <div style="display:flex; align-items:center; gap:14px; width:100%;">
+            <div class="archive-icon-wrap"><span class="material-symbols-outlined">${iconType}</span></div>
+            <div class="archive-info">
+              <div class="archive-name">${entry.contactName}</div>
+              <div class="archive-meta">${entry.type} · ${entry.distanceKm || 0} KM · ${new Date(entry.uploadedAt).toLocaleDateString('id-ID')}</div>
+            </div>
+            <div class="archive-right">
+              <div class="archive-price">Rp ${(entry.fare || 0).toLocaleString('id-ID')}</div>
+              <div class="archive-badge">Selesai</div>
+            </div>
           </div>
-          <div class="archive-info">
-            <div class="archive-name">${entry.contactName}</div>
-            <div class="archive-meta">${entry.type} · ${entry.distanceKm || 0} KM · ${new Date(entry.uploadedAt).toLocaleDateString('id-ID')}</div>
-          </div>
-          <div class="archive-right">
-            <div class="archive-price">Rp ${(entry.fare || 0).toLocaleString('id-ID')}</div>
-            <div class="archive-badge">Selesai</div>
+          
+          <button class="toggle-detail-btn" style="margin-top:10px;" onclick="window.toggleArchiveDetail('${entry.id}')">
+              <span id="icon-arch-expand-${entry.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
+              Show More
+          </button>
+          
+          <div id="arch-detail-${entry.id}" class="d-none" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--gray-200); font-size:13px; color:var(--gray-600); line-height:1.6;">
+             <p><strong>Alamat Ambil:</strong> ${entry.pickupDetail || entry.pickupAddress}</p>
+             <p><strong>Alamat Antar:</strong> ${entry.deliveryDetail || entry.deliveryAddress}</p>
+             <p style="margin-top:8px;"><strong>Bukti Penyelesaian:</strong></p>
+             <div style="display:flex; gap:8px; margin-top:4px;">
+                <a href="https://images.unsplash.com/photo-1620822607871-dd1a48c6f3d1" target="_blank" style="flex:1; background:var(--gray-100); text-align:center; padding:8px; border-radius:6px; color:var(--green-dark); text-decoration:none; font-weight:600; border:1px solid var(--gray-200);"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:16px;">image</span> Foto Barang</a>
+                <a href="https://images.unsplash.com/photo-1620822607871-dd1a48c6f3d1" target="_blank" style="flex:1; background:var(--gray-100); text-align:center; padding:8px; border-radius:6px; color:var(--green-dark); text-decoration:none; font-weight:600; border:1px solid var(--gray-200);"><span class="material-symbols-outlined" style="vertical-align:middle; font-size:16px;">image</span> Foto Serah Terima</a>
+             </div>
           </div>
         </div>`;
     });
@@ -1590,7 +1516,7 @@
     const t = document.getElementById('toast');
     t.classList.add('show');
     clearTimeout(_toastT);
-    _toastT = setTimeout(() => t.classList.remove('show'), 3000);
+    _toastT = setTimeout(() => t.classList.remove('show'), 3500);
   }
 </script>
 </body>
