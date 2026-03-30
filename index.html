@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>JastipUnnes</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+<style>
+  :root {
+    --md-primary: #1A73E8; --md-primary-hover: #1557B0; --md-primary-light: #E8F0FE;
+    --md-secondary: #1A73E8; --md-error: #D93025; --md-surface: #FFFFFF;
+    --md-surface-2: #F8F9FA; --md-surface-3: #F1F3F4; --md-on-surface: #202124;
+    --md-on-surface-variant: #5F6368; --md-outline: #DADCE0;
+    --md-radius-sm: 8px; --md-radius-md: 12px; --md-radius-full: 100px;
+    --font-main: 'Google Sans', 'Roboto', sans-serif;
+  }
+  
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-main); background: var(--md-surface-2); color: var(--md-on-surface); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  .g-blue { color: var(--md-primary) !important; }
+  .d-none { display: none !important; }
+  .text-center { text-align: center; }
+
+  #splash { position: fixed; inset: 0; z-index: 9000; background: var(--md-surface); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 20px 0;}
+  #splash.hidden { display: none; }
+  .splash-logo { display: flex; align-items: center; justify-content: center; margin-bottom: 16px; margin-top: auto;}
+  .splash-logo .material-symbols-outlined { font-size: 64px; }
+  .splash-title { font-size: 28px; font-weight: 700; color: var(--md-on-surface); margin-bottom: 4px; letter-spacing: -0.5px; }
+  .splash-sub { font-size: 14px; color: var(--md-on-surface-variant); margin-bottom: 32px; }
+  
+  .login-card { width: calc(100% - 40px); max-width: 360px; background: var(--md-surface); border: 1px solid var(--md-outline); border-radius: var(--md-radius-md); padding: 24px; margin-bottom: auto;}
+  .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--md-surface-3); }
+  .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 500; color: var(--md-on-surface-variant); font-size: 15px; }
+  .auth-tab.active { color: var(--md-primary); border-bottom: 2px solid var(--md-primary); margin-bottom: -2px; }
+  
+  .field-wrap { margin-bottom: 16px; }
+  .field { width: 100%; padding: 12px 14px; border-radius: var(--md-radius-sm); border: 1px solid var(--md-outline); background: var(--md-surface); font-family: var(--font-main); font-size: 15px; color: var(--md-on-surface); outline: none; transition: border 0.2s; }
+  .field:focus { border: 2px solid var(--md-primary); padding: 11px 13px; }
+  .field:disabled, .field[readonly] { background: var(--md-surface-3); color: var(--md-on-surface-variant); cursor: not-allowed; }
+  
+  .btn-primary, .btn-secondary { width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: var(--md-radius-full); font-family: var(--font-main); font-size: 14px; font-weight: 500; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-primary { background: var(--md-primary); color: #fff; }
+  .btn-primary:hover { background: var(--md-primary-hover); }
+  .btn-primary:disabled { background: var(--md-outline); cursor: not-allowed; color: var(--md-on-surface-variant); }
+  .btn-secondary { background: var(--md-surface); color: var(--md-on-surface); border: 1px solid var(--md-outline); margin-top: 10px; }
+  .btn-secondary:hover { background: var(--md-surface-2); }
+  
+  .btn-google { background: #fff; color: #3c4043; border: 1px solid var(--md-outline); margin-top: 8px; }
+  .btn-google:hover { background: var(--md-surface-2); }
+  .btn-google img { width: 18px; margin-right: 8px; }
+
+  #app { display: none; flex-direction: column; min-height: 100vh; }
+  #app.visible { display: flex; }
+
+  .top-bar { position: sticky; top: 0; z-index: 100; background: var(--md-surface); border-bottom: 1px solid var(--md-outline); padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .top-bar-left { display: flex; align-items: center; gap: 10px; }
+  .top-bar-title { font-size: 18px; font-weight: 500; color: var(--md-on-surface); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--md-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; text-transform: uppercase; overflow: hidden; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .icon-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--md-on-surface-variant); }
+  
+  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--md-surface); border-top: 1px solid var(--md-outline); display: flex; height: 64px; }
+  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: none; background: none; color: var(--md-on-surface-variant); }
+  .nav-indicator { width: 64px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
+  .nav-item .label { font-size: 12px; font-weight: 500; }
+  .nav-item.active { color: var(--md-on-surface); }
+  .nav-item.active .nav-indicator { background: var(--md-primary-light); color: var(--md-on-surface); }
+
+  .content { flex: 1; padding: 16px 16px 88px; max-width: 600px; margin: 0 auto; width: 100%; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .section-header { margin-bottom: 16px; padding: 8px 0; display: flex; align-items: center; gap: 8px; }
+  .section-header h2 { font-size: 22px; font-weight: 400; color: var(--md-on-surface); }
+  
+  .card { background: var(--md-surface); border-radius: var(--md-radius-md); padding: 16px; margin-bottom: 16px; border: 1px solid var(--md-outline); position: relative; }
+  .card-title { font-size: 14px; font-weight: 500; color: var(--md-on-surface); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .field-label { font-size: 12px; font-weight: 500; color: var(--md-on-surface-variant); margin-bottom: 6px; display: block; }
+  .field-required { color: var(--md-error); }
+
+  .chips-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--md-outline); background: var(--md-surface); font-size: 14px; cursor: pointer; color: var(--md-on-surface-variant); display: flex; align-items: center; gap: 6px; }
+  .chip.selected { background: var(--md-primary-light); border-color: var(--md-primary-light); color: var(--md-primary); font-weight: 500; }
+
+  .notice-card { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 13px; line-height: 1.5; color: #E65100; }
+  
+  .search-bar { background: var(--md-surface-2); border-radius: var(--md-radius-full); display: flex; align-items: center; padding: 4px 16px; margin-bottom: 12px; }
+  .search-bar input { flex: 1; border: none; background: none; outline: none; padding: 10px 8px; font-size: 15px; font-family: var(--font-main); }
+  .search-clear { background: none; border: none; color: var(--md-on-surface-variant); cursor: pointer; display: none; }
+  .search-clear.visible { display: block; }
+
+  /* Redesigned Archive UI */
+  .archive-card { background: var(--md-surface); border-radius: var(--md-radius-md); padding: 16px; margin-bottom: 12px; border: 1px solid var(--md-outline); display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+  .archive-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--md-outline); padding-bottom: 10px; }
+  .archive-title { font-weight: 600; font-size: 15px; color: var(--md-on-surface); display:flex; align-items:center; gap:8px;}
+  .archive-date { font-size: 12px; color: var(--md-on-surface-variant); }
+  .archive-body { display: flex; justify-content: space-between; align-items: center; }
+  .archive-price { font-size: 16px; font-weight: 700; color: var(--md-primary); }
+  .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+
+  /* Animasi Garis Timeline */
+  .timeline-container { display: flex; align-items: center; justify-content: space-between; margin: 16px 0; position: relative; }
+  .timeline-track { position: absolute; top: 14px; left: 15%; right: 15%; height: 4px; background: var(--md-surface-3); z-index: 1; border-radius: 2px; display: flex; overflow: hidden; }
+  .timeline-segment { flex: 1; height: 100%; transition: background 0.3s; }
+  
+  .anim-flow {
+    background: repeating-linear-gradient(-45deg, var(--md-primary) 0, var(--md-primary) 10px, var(--md-primary-light) 10px, var(--md-primary-light) 20px);
+    background-size: 28px 28px;
+    animation: flow-stripes 1s linear infinite;
+  }
+  .solid-flow { background: var(--md-primary); }
+  @keyframes flow-stripes { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }
+
+  .timeline-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px; }
+  .timeline-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--md-surface); border: 2px solid var(--md-surface-3); display: flex; align-items: center; justify-content: center; transition: all 0.3s;}
+  .timeline-circle .material-symbols-outlined { font-size: 16px; color: var(--md-on-surface-variant); }
+  .timeline-step.active .timeline-circle { border-color: var(--md-primary); background: var(--md-primary-light); }
+  .timeline-step.active .timeline-circle .material-symbols-outlined { color: var(--md-primary); }
+  .timeline-step.done .timeline-circle { border-color: #25D366; background: #25D366; }
+  .timeline-step.done .timeline-circle .material-symbols-outlined { color: white; }
+  .timeline-label { font-size: 11px; color: var(--md-on-surface-variant); font-weight: 500; text-align: center; line-height: 1.2;}
+  .timeline-step.active .timeline-label { color: var(--md-primary); font-weight: 700; }
+
+  .fab-wa { position: fixed; bottom: 80px; right: 16px; width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 99; color: white; text-decoration: none; }
+  .fab-wa img { width: 32px; height: 32px; }
+
+  #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #323232; color: #fff; padding: 12px 24px; border-radius: 4px; font-size: 14px; z-index: 10001; display: none; align-items: center; gap: 8px; text-align: center; white-space: nowrap;}
+  #toast.show { display: flex; }
+
+  .modal-overlay { position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet { background: var(--md-surface); border-radius: 16px; padding: 24px; width: calc(100% - 32px); max-width: 400px; max-height: 90vh; overflow-y: auto; }
+  .modal-title { font-size: 20px; font-weight: 500; margin-bottom: 12px; color: var(--md-primary); }
+
+  #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+  #loading-overlay.visible { display: flex; }
+  .spinner { border: 4px solid var(--md-surface-3); border-top: 4px solid var(--md-primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 16px; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  /* Perbaikan Animasi GIF - Pastikan z-index tinggi dan display none dinamis lewat JS murni */
+  .dancing-container { position: fixed; bottom: 85px; left: 16px; z-index: 9999; pointer-events: none; display: none; }
+  .dancing-container img { width: 80px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+  
+  /* Utilities untuk detail pesanan diproses */
+  .action-btns-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<audio id="sfx-create" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+<audio id="sfx-process" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" preload="auto"></audio>
+
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <p style="font-weight: 500; color: var(--md-on-surface);" id="loading-text">Memproses...</p>
+</div>
+
+<div class="modal-overlay" id="info-modal">
+  <div class="modal-sheet">
+    <div class="modal-title"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 6px;">info</span> Informasi JastipUnnes</div>
+    <div style="font-size: 14px; color: var(--md-on-surface); line-height: 1.6; margin-bottom: 20px;">
+      <p style="margin-bottom: 8px;"><strong>JastipUnnes</strong> adalah layanan penyewaan jasa untuk 3 kategori:</p>
+      <ul style="padding-left: 20px; margin-bottom: 12px;">
+        <li><strong>Jastip Resto/Toko:</strong> Membelikan barang/makanan dan mengantarkannya.</li>
+        <li><strong>Ambil Instan:</strong> Mengambil barang Anda yang sudah dibayar atau mengambil dari teman/keluarga.</li>
+        <li><strong>Kirim Instan:</strong> Mengirim barang dari Anda ke penerima yang ditentukan.</li>
+      </ul>
+      <p style="margin-bottom: 4px;"><strong>Waktu Operasional:</strong> 05.00 - 21.00 WIB</p>
+      <p style="margin-bottom: 4px;"><strong>Area Layanan:</strong> Semarang</p>
+      <p style="margin-bottom: 4px;"><strong>Ketentuan Pengguna:</strong> Mahasiswa UNNES / Teman atau Keluarga Mahasiswa UNNES.</p>
+    </div>
+    <button class="btn-primary" onclick="window.closeInfoModal()">Mengerti</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">Edit Profil</div>
+    <div class="text-center" style="margin-bottom: 20px;">
+      <div style="width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 50%; background: var(--md-primary-light); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        <img id="prof-preview-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+        <span id="prof-preview-text" style="font-size: 32px; color: var(--md-primary); font-weight: 500;">U</span>
+      </div>
+      <input type="file" id="f-prof-pic" accept="image/*" style="display: none;" onchange="window.previewAvatar(event)">
+      <button class="badge" style="background: var(--md-surface); border: 1px solid var(--md-outline); cursor:pointer;" onclick="document.getElementById('f-prof-pic').click()">Ganti Foto</button>
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">Nama Lengkap</label>
+      <input class="field" id="f-prof-name" type="text" placeholder="Nama Anda">
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">Nomor WhatsApp</label>
+      <input class="field" id="f-prof-phone" type="number" placeholder="08xxxxxxxx">
+    </div>
+    <button class="btn-primary" onclick="window.saveProfile()">Simpan Perubahan</button>
+    <button class="btn-secondary" onclick="window.closeProfileModal()">Batal</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="complete-profile-modal">
+  <div class="modal-sheet">
+    <div class="modal-title">Lengkapi Profil Anda</div>
+    <p style="font-size:13px; margin-bottom:16px; color:var(--md-on-surface-variant)">Silakan lengkapi nama dan nomor WhatsApp Anda untuk dapat melanjutkan.</p>
+    <div class="field-wrap">
+      <label class="field-label">Nama Lengkap <span class="field-required">*</span></label>
+      <input class="field" id="comp-name" type="text" placeholder="Nama Anda">
+    </div>
+    <div class="field-wrap">
+      <label class="field-label">Nomor WhatsApp <span class="field-required">*</span></label>
+      <input class="field" id="comp-phone" type="number" placeholder="08xxxxxxxx">
+    </div>
+    <button class="btn-primary" onclick="window.saveCompleteProfile()">Simpan & Lanjutkan</button>
+  </div>
+</div>
+
+<div id="splash">
+  <div class="splash-logo"><span class="material-symbols-outlined g-blue">local_shipping</span></div>
+  <div class="splash-title">JastipUnnes</div>
+  <div class="splash-sub">Sistem Manajemen Pengiriman & Titipan</div>
+  
+  <div class="login-card">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tab-login" onclick="window.switchAuth('login')">Masuk</div>
+      <div class="auth-tab" id="tab-signup" onclick="window.switchAuth('signup')">Daftar</div>
+    </div>
+
+    <div id="auth-login-form">
+      <div class="field-wrap">
+        <input type="email" class="field" id="login-user" placeholder="Email" autocomplete="username">
+      </div>
+      <div class="field-wrap">
+        <input type="password" class="field" id="login-pass" placeholder="Password" autocomplete="current-password">
+      </div>
+      <button class="btn-primary" onclick="window.doLogin()">Masuk</button>
+    </div>
+
+    <div id="auth-signup-form" class="d-none">
+      <div class="field-wrap">
+        <input type="text" class="field" id="signup-name" placeholder="Nama Lengkap">
+      </div>
+      <div class="field-wrap">
+        <input type="number" class="field" id="signup-phone" placeholder="Nomor WhatsApp">
+      </div>
+      <div class="field-wrap">
+        <input type="email" class="field" id="signup-email" placeholder="Email Baru">
+      </div>
+      <div class="field-wrap">
+        <input type="password" class="field" id="signup-pass" placeholder="Password (Min 6 karakter)">
+      </div>
+      <button class="btn-primary" onclick="window.doSignup()">Daftar Akun</button>
+    </div>
+
+    <div style="text-align:center; margin:20px 0 16px; font-size:12px; color:var(--md-on-surface-variant)">ATAU</div>
+    
+    <button class="btn-primary btn-google" onclick="window.doGoogleAuth()">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"> Lanjutkan dengan Google
+    </button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="material-symbols-outlined g-blue">local_shipping</span>
+      <span class="top-bar-title">JastipUnnes</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div class="avatar" id="user-avatar" onclick="window.openProfileModal()" style="cursor:pointer;" title="Profil">U</div>
+      <button class="icon-btn" onclick="window.doLogout()" title="Keluar"><span class="material-symbols-outlined">logout</span></button>
+    </div>
+  </div>
+
+  <div class="content">
+    
+    <div class="page active" id="page-upload">
+      <div class="section-header">
+        <h2>Buat Pesanan</h2>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="material-symbols-outlined">category</span> Kategori Layanan</div>
+        <div class="field-wrap" style="margin-bottom:0">
+          <div class="chips-wrap" id="type-chips">
+            <div class="chip selected" onclick="window.selectType(this,'Jastip resto/toko')">Jastip resto/toko</div>
+            <div class="chip" onclick="window.selectType(this,'Ambil Instan')">Ambil Instan</div>
+            <div class="chip" onclick="window.selectType(this,'Kirim Instan')">Kirim Instan</div>
+          </div>
+          <div id="notice-container" class="notice-card">
+            <strong>Pemberitahuan:</strong> Di awal perlu TF untuk beli barang/makanannya, ongkos dibayar setelah sampai (Cash/TF). COD sepenuhnya jika sudah pernah memesan layanan minimal 1x.
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="material-symbols-outlined" id="icon-pickup">storefront</span> Lokasi Pengambilan <span class="field-required">*</span></div>
+        <div class="field-wrap">
+          <label class="field-label" id="label-pickup">Link Maps <span class="field-required">*</span></label>
+          <div style="display:flex; gap:8px;">
+            <input class="field" id="f-pickup-loc" type="text" placeholder="Masukkan Link Maps...">
+            <button class="btn-primary" id="btn-pickup-maps" style="width:auto; padding: 0 16px;" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
+            <button class="btn-primary d-none" id="btn-pickup-gps" style="width:auto; padding: 0 16px; background:var(--md-secondary);" onclick="window.getLocation('f-pickup-loc')"><span class="material-symbols-outlined">my_location</span></button>
+          </div>
+        </div>
+        <div class="field-wrap" style="margin-bottom:0">
+          <label class="field-label">Nama Tempat / Patokan</label>
+          <input class="field" id="f-pickup-detail" type="text" placeholder="Detail Toko / Lokasi Pengambilan">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="material-symbols-outlined">home_pin</span> Lokasi Pengiriman <span class="field-required">*</span></div>
+        <div class="field-wrap">
+          <label class="field-label" id="label-delivery">Titik Koordinat <span class="field-required">*</span></label>
+          <div style="display:flex; gap:8px;">
+            <input class="field" id="f-delivery-loc" type="text" placeholder="Tekan tombol GPS disamping..." readonly>
+            <button class="btn-primary d-none" id="btn-delivery-maps" style="width:auto; padding: 0 16px;" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
+            <button class="btn-primary" id="btn-delivery-gps" style="width:auto; padding: 0 16px; background:var(--md-secondary);" onclick="window.getLocation('f-delivery-loc')"><span class="material-symbols-outlined">my_location</span></button>
+          </div>
+        </div>
+        <div class="field-wrap" style="margin-bottom:0">
+          <label class="field-label">Nama Tempat / Patokan</label>
+          <input class="field" id="f-delivery-detail" type="text" placeholder="Detail Alamat Pengiriman">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="material-symbols-outlined">notes</span> Catatan & Waktu</div>
+        <div class="field-wrap">
+          <label class="field-label">Catatan Pesanan</label>
+          <textarea class="field" id="f-catatan" rows="2" placeholder="Cth: Tolong letakkan di teras, rumah warna hijau..."></textarea>
+        </div>
+        <div class="field-wrap" style="margin-bottom:0">
+           <label class="field-label">Waktu Pengambilan</label>
+           <div style="display:flex; gap:8px; margin-bottom:8px;">
+             <button class="btn-secondary" id="btn-langsung" style="flex:1; border-color:var(--md-primary); color:var(--md-primary); margin-top:0;" onclick="window.setWaktu('Langsung')">Langsung</button>
+             <button class="btn-secondary" id="btn-jadwal" style="flex:1; margin-top:0;" onclick="window.setWaktu('Jadwalkan')">Jadwalkan</button>
+           </div>
+           <input type="datetime-local" class="field d-none" id="f-waktu-jadwal">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="material-symbols-outlined">person</span> Data Kontak <span class="field-required">*</span></div>
+        
+        <div id="container-penerima">
+          <div class="field-wrap">
+            <label class="field-label">Nama Penerima <span class="field-required">*</span></label>
+            <input class="field" id="f-penerima-nama" type="text" placeholder="Nama Penerima Barang">
+          </div>
+          <div class="field-wrap" style="margin-bottom:0">
+            <label class="field-label">Nomor WhatsApp Penerima <span class="field-required">*</span></label>
+            <input class="field" id="f-penerima-wa" type="number" placeholder="08xxxxxxxx">
+          </div>
+        </div>
+
+        <div id="container-pengirim" class="d-none">
+          <div class="field-wrap">
+            <label class="field-label">Nama Pengirim <span class="field-required">*</span></label>
+            <input class="field" id="f-pengirim-nama" type="text" placeholder="Nama Anda (Pengirim)">
+          </div>
+          <div class="field-wrap" style="margin-bottom:0">
+            <label class="field-label">Nomor WhatsApp Pengirim <span class="field-required">*</span></label>
+            <input class="field" id="f-pengirim-wa" type="number" placeholder="08xxxxxxxx">
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="background: var(--md-surface-2); border-color: var(--md-primary-light);">
+        <div class="card-title" style="color:var(--md-primary)"><span class="material-symbols-outlined">payments</span> Tarif & Jarak</div>
+        <div class="field-wrap">
+          <label class="field-label">Jarak Tempuh (KM) <span class="field-required">*</span></label>
+          <div style="display:flex; gap:8px;">
+            <input class="field" id="f-distance" type="number" step="0.1" min="0" placeholder="0.0" oninput="window.calculateArgoManual()">
+            <button class="btn-primary" style="width:auto; padding: 0 16px;" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+          <span style="color:var(--md-on-surface-variant); font-size:14px;">Total Argo/Tarif:</span>
+          <strong id="display-fare" style="color:var(--md-primary); font-size:20px;">Rp 0</strong>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="btn-upload" onclick="window.doUpload()">Buat Pesanan</button>
+    </div>
+
+    <div class="page" id="page-proses">
+      <div class="section-header">
+        <h2>Pesanan Diproses</h2>
+      </div>
+      <div id="proses-results"></div>
+    </div>
+
+    <div class="page" id="page-archive">
+      <div class="section-header">
+        <h2>Riwayat Selesai</h2>
+      </div>
+      <div class="search-bar">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" id="search-input" placeholder="Cari nama..." oninput="window.onSearch()">
+        <button class="search-clear" id="search-clear" onclick="window.clearSearch()"><span class="material-symbols-outlined" style="font-size:20px">close</span></button>
+      </div>
+      <div id="archive-results"></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item active" id="nav-upload" onclick="window.switchPage('upload')">
+      <div class="nav-indicator"><span class="material-symbols-outlined">add_box</span></div>
+      <span class="label">Buat Pesanan</span>
+    </button>
+    <button class="nav-item" id="nav-proses" onclick="window.switchPage('proses')">
+      <div class="nav-indicator"><span class="material-symbols-outlined">hourglass_top</span></div>
+      <span class="label">Proses</span>
+    </button>
+    <button class="nav-item" id="nav-archive" onclick="window.switchPage('archive')">
+      <div class="nav-indicator"><span class="material-symbols-outlined">history</span></div>
+      <span class="label">Riwayat</span>
+    </button>
+  </div>
+</div>
+
+<a href="https://wa.me/6285138238914" target="_blank" class="fab-wa" title="Hubungi CS">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WA">
+</a>
+
+<div id="dancing-container" class="dancing-container">
+  <img src="https://media.tenor.com/b545_qP83O8AAAAj/dancing-chicken.gif" alt="Dancing Chicken">
+</div>
+
+<div id="toast"><span id="toast-msg">OK</span></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, query, where, doc, setDoc, getDoc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDeAIeJYabLqzX8_lwBkDZE98EOc3-9lYY",
+    authDomain: "arsipmrikanasin.firebaseapp.com",
+    projectId: "arsipmrikanasin",
+    storageBucket: "arsipmrikanasin.firebasestorage.app",
+    messagingSenderId: "789371282298",
+    appId: "1:789371282298:web:edc61d7bc00935fc22ecc3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  
+  const googleProvider = new GoogleAuthProvider();
+  googleProvider.setCustomParameters({ client_id: '789371282298-jju2gdn42r0s8n2sr1h241r9lb1ogqnp.apps.googleusercontent.com' });
+
+  let currentUserUid = '';
+  let currentUserEmail = '';
+  let currentUserData = null;
+  let selectedType = 'Jastip resto/toko';
+  
+  window.activeOrdersData = [];
+  window.historyOrdersData = [];
+  let unsubscribeOrders = null;
+  
+  window.currentOrderDist = null;
+  window.currentOrderFare = null;
+  window.tempAvatarData = null;
+  window.isRegistering = false; 
+
+  window.waktuType = 'Langsung';
+  let hasPlayedProcessSound = false; 
+
+  function showLoading(text) {
+    document.getElementById('loading-text').textContent = text;
+    document.getElementById('loading-overlay').classList.add('visible');
+  }
+  function hideLoading() {
+    document.getElementById('loading-overlay').classList.remove('visible');
+  }
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUserUid = user.uid;
+      currentUserEmail = user.email;
+      if (!window.isRegistering) {
+        await checkUserProfile(user);
+      }
+    } else {
+      currentUserUid = '';
+      if(unsubscribeOrders) unsubscribeOrders();
+      document.getElementById('app').classList.remove('visible');
+      document.getElementById('splash').classList.remove('hidden');
+    }
+  });
+
+  async function checkUserProfile(user) {
+    try {
+      const userRef = doc(db, "users", user.uid);
+      const snap = await getDoc(userRef);
+      if (snap.exists() && snap.data().phone) {
+        currentUserData = snap.data();
+        updateUserAvatarUI(currentUserData);
+        
+        document.getElementById('splash').classList.add('hidden');
+        document.getElementById('complete-profile-modal').classList.remove('open');
+        document.getElementById('app').classList.add('visible');
+        
+        subscribeOrders();
+        document.getElementById('info-modal').classList.add('open');
+      } else {
+        document.getElementById('complete-profile-modal').classList.add('open');
+      }
+    } catch (e) {
+      console.error(e);
+      showToast('Gagal memuat profil: ' + e.message);
+    }
+  }
+
+  function updateUserAvatarUI(data) {
+    const av = document.getElementById('user-avatar');
+    if (data.avatar && data.avatar.trim() !== "") {
+      av.innerHTML = `<img src="${data.avatar}" alt="PFP">`;
+    } else {
+      av.innerHTML = data.name ? data.name[0].toUpperCase() : 'U';
+    }
+  }
+
+  // Auth Functions (sama seperti sebelumnya)...
+  window.switchAuth = function(mode) {
+    document.getElementById('tab-login').classList.remove('active');
+    document.getElementById('tab-signup').classList.remove('active');
+    document.getElementById('auth-login-form').classList.add('d-none');
+    document.getElementById('auth-signup-form').classList.add('d-none');
+    
+    document.getElementById('tab-' + mode).classList.add('active');
+    document.getElementById('auth-' + mode + '-form').classList.remove('d-none');
+  }
+
+  window.doLogin = async function() {
+    const email = document.getElementById('login-user').value.trim();
+    const p = document.getElementById('login-pass').value.trim();
+    if (!email || !p) { showToast('Isi email dan password'); return; }
+    showLoading('Sedang Login...');
+    try {
+      await signInWithEmailAndPassword(auth, email, p);
+      showToast('Login Berhasil');
+    } catch (error) {
+      showToast('Login Gagal: ' + error.message);
+    } finally { hideLoading(); }
+  }
+
+  window.doSignup = async function() {
+    const name = document.getElementById('signup-name').value.trim();
+    const phone = document.getElementById('signup-phone').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const p = document.getElementById('signup-pass').value.trim();
+    
+    if(!name || !phone || !email || !p) { showToast('Harap lengkapi semua data'); return; }
+    if(p.length < 6) { showToast('Password minimal 6 karakter'); return; }
+
+    showLoading('Mendaftar...');
+    window.isRegistering = true; 
+    try {
+      const cred = await createUserWithEmailAndPassword(auth, email, p);
+      await setDoc(doc(db, "users", cred.user.uid), {
+         name: name, phone: phone, email: email, avatar: ''
+      });
+      window.isRegistering = false; 
+      await checkUserProfile(cred.user); 
+      showToast('Pendaftaran Berhasil');
+    } catch (error) {
+      window.isRegistering = false;
+      showToast('Daftar Gagal: ' + error.message);
+    } finally { hideLoading(); }
+  }
+
+  window.doGoogleAuth = async function() {
+    try {
+      showLoading('Membuka Google...');
+      await signInWithPopup(auth, googleProvider);
+    } catch(error) {
+      if(error.code !== 'auth/popup-closed-by-user') {
+          showToast('Google Auth Gagal: ' + error.message);
+      }
+    } finally { hideLoading(); }
+  }
+
+  // Lengkapi Profil dll...
+  window.saveCompleteProfile = async function() {
+    const name = document.getElementById('comp-name').value.trim();
+    const phone = document.getElementById('comp-phone').value.trim();
+    if(!name || !phone) { showToast("Harap isi nama dan nomor WA"); return; }
+    
+    showLoading("Menyimpan...");
+    try {
+      await setDoc(doc(db, "users", currentUserUid), {
+         name: name, phone: phone, email: currentUserEmail, avatar: ''
+      }, {merge: true});
+      document.getElementById('complete-profile-modal').classList.remove('open');
+      await checkUserProfile(auth.currentUser);
+      showToast('Profil dilengkapi');
+    } catch(e) {
+      showToast(e.message);
+    } finally { hideLoading(); }
+  }
+
+  window.openProfileModal = function() {
+    if(!currentUserData) return;
+    document.getElementById('f-prof-name').value = currentUserData.name || '';
+    document.getElementById('f-prof-phone').value = currentUserData.phone || '';
+    
+    const previewImg = document.getElementById('prof-preview-img');
+    const previewText = document.getElementById('prof-preview-text');
+    
+    if (currentUserData.avatar) {
+      previewImg.src = currentUserData.avatar;
+      previewImg.style.display = 'block';
+      previewText.style.display = 'none';
+    } else {
+      previewImg.style.display = 'none';
+      previewText.style.display = 'block';
+      previewText.innerText = currentUserData.name ? currentUserData.name[0].toUpperCase() : 'U';
+    }
+    
+    window.tempAvatarData = null;
+    document.getElementById('profile-modal').classList.add('open');
+  }
+
+  window.closeProfileModal = function() {
+    document.getElementById('profile-modal').classList.remove('open');
+  }
+
+  window.previewAvatar = function(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const previewImg = document.getElementById('prof-preview-img');
+      previewImg.src = e.target.result;
+      previewImg.style.display = 'block';
+      document.getElementById('prof-preview-text').style.display = 'none';
+      window.tempAvatarData = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
+
+  window.saveProfile = async function() {
+    const name = document.getElementById('f-prof-name').value.trim();
+    const phone = document.getElementById('f-prof-phone').value.trim();
+    if(!name || !phone) { showToast("Nama dan WA wajib diisi"); return; }
+
+    showLoading("Memperbarui Profil...");
+    try {
+      let finalAvatar = window.tempAvatarData !== null ? window.tempAvatarData : currentUserData.avatar;
+      await updateDoc(doc(db, "users", currentUserUid), {
+        name: name, phone: phone, avatar: finalAvatar
+      });
+      currentUserData.name = name;
+      currentUserData.phone = phone;
+      currentUserData.avatar = finalAvatar;
+      updateUserAvatarUI(currentUserData);
+      window.closeProfileModal();
+      showToast("Profil diperbarui");
+    } catch(e) {
+      showToast("Gagal update profil");
+    } finally { hideLoading(); }
+  }
+
+  window.doLogout = function() {
+    signOut(auth);
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    currentUserData = null;
+  }
+
+  window.closeInfoModal = function() { document.getElementById('info-modal').classList.remove('open'); }
+
+  window.switchPage = function(p) {
+    document.querySelectorAll('.page, .nav-item').forEach(x => x.classList.remove('active'));
+    document.getElementById('page-' + p).classList.add('active');
+    document.getElementById('nav-' + p).classList.add('active');
+    
+    if(p === 'proses') window.renderProses();
+    if(p === 'archive') window.renderArchive();
+  }
+
+  window.selectType = function(el, type) {
+    document.querySelectorAll('#type-chips .chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedType = type;
+
+    const notice = document.getElementById('notice-container');
+    const iconPickup = document.getElementById('icon-pickup');
+    
+    const fPick = document.getElementById('f-pickup-loc');
+    const btnPickMaps = document.getElementById('btn-pickup-maps');
+    const btnPickGps = document.getElementById('btn-pickup-gps');
+    
+    const fDeliv = document.getElementById('f-delivery-loc');
+    const btnDelivMaps = document.getElementById('btn-delivery-maps');
+    const btnDelivGps = document.getElementById('btn-delivery-gps');
+
+    const contPenerima = document.getElementById('container-penerima');
+    const contPengirim = document.getElementById('container-pengirim');
+
+    fPick.value = ''; fDeliv.value = '';
+
+    if (type === 'Jastip resto/toko') {
+      iconPickup.textContent = 'storefront';
+      notice.innerHTML = '<strong>Pemberitahuan:</strong> Pembayaran hanya TF untuk beli barang/makanan, ongkos dibayar COD atau TF setelah sampai. COD sepenuhnya jika sudah pernah memesan layanan minimal 1x.';
+      document.getElementById('label-pickup').innerHTML = 'Link Maps <span class="field-required">*</span>';
+      fPick.readOnly = false; fPick.placeholder = "Masukkan Link Maps...";
+      btnPickMaps.classList.remove('d-none'); btnPickGps.classList.add('d-none');
+      document.getElementById('label-delivery').innerHTML = 'Titik Koordinat <span class="field-required">*</span>';
+      fDeliv.readOnly = true; fDeliv.placeholder = "Tekan tombol GPS disamping...";
+      btnDelivMaps.classList.add('d-none'); btnDelivGps.classList.remove('d-none');
+      contPenerima.classList.remove('d-none'); contPengirim.classList.add('d-none');
+
+    } else if (type === 'Ambil Instan') {
+      iconPickup.textContent = 'home_pin'; 
+      notice.innerHTML = '<strong>Pemberitahuan:</strong> Barang max 15 kg, PxLxT: 50x50x60 cm.';
+      document.getElementById('label-pickup').innerHTML = 'Link Maps <span class="field-required">*</span>';
+      fPick.readOnly = false; fPick.placeholder = "Masukkan Link Maps...";
+      btnPickMaps.classList.remove('d-none'); btnPickGps.classList.add('d-none');
+      document.getElementById('label-delivery').innerHTML = 'Titik Koordinat <span class="field-required">*</span>';
+      fDeliv.readOnly = true; fDeliv.placeholder = "Tekan tombol GPS disamping...";
+      btnDelivMaps.classList.add('d-none'); btnDelivGps.classList.remove('d-none');
+      contPenerima.classList.remove('d-none'); contPengirim.classList.add('d-none');
+
+    } else if (type === 'Kirim Instan') {
+      iconPickup.textContent = 'storefront';
+      notice.innerHTML = '<strong>Pemberitahuan:</strong> Barang max 15 kg, PxLxT: 50x50x60 cm.';
+      document.getElementById('label-pickup').innerHTML = 'Titik Koordinat <span class="field-required">*</span>';
+      fPick.readOnly = true; fPick.placeholder = "Tekan tombol GPS disamping...";
+      btnPickMaps.classList.add('d-none'); btnPickGps.classList.remove('d-none');
+      document.getElementById('label-delivery').innerHTML = 'Link Maps <span class="field-required">*</span>';
+      fDeliv.readOnly = false; fDeliv.placeholder = "Masukkan Link Maps...";
+      btnDelivMaps.classList.remove('d-none'); btnDelivGps.classList.add('d-none');
+      contPenerima.classList.add('d-none'); contPengirim.classList.remove('d-none');
+    }
+  }
+
+  window.setWaktu = function(waktu) {
+    window.waktuType = waktu;
+    const btnL = document.getElementById('btn-langsung');
+    const btnJ = document.getElementById('btn-jadwal');
+    const inJ = document.getElementById('f-waktu-jadwal');
+    
+    if(waktu === 'Langsung') {
+      btnL.style.borderColor = 'var(--md-primary)'; btnL.style.color = 'var(--md-primary)';
+      btnJ.style.borderColor = 'var(--md-outline)'; btnJ.style.color = 'var(--md-on-surface)';
+      inJ.classList.add('d-none');
+    } else {
+      btnJ.style.borderColor = 'var(--md-primary)'; btnJ.style.color = 'var(--md-primary)';
+      btnL.style.borderColor = 'var(--md-outline)'; btnL.style.color = 'var(--md-on-surface)';
+      inJ.classList.remove('d-none');
+    }
+  }
+
+  window.openGoogleMaps = function() { window.open('https://maps.google.com', '_blank'); }
+
+  window.getLocation = function(targetId) {
+    if (!navigator.geolocation) { showToast('GPS tidak didukung browser ini'); return; }
+    showToast('Mencari lokasi...');
+    navigator.geolocation.getCurrentPosition(pos => {
+      document.getElementById(targetId).value = `${pos.coords.latitude.toFixed(6)}, ${pos.coords.longitude.toFixed(6)}`;
+      showToast('Titik koordinat didapatkan');
+    }, () => { showToast('Gagal Akses GPS, pastikan izin diaktifkan.'); });
+  }
+
+  window.calculateArgoManual = function() {
+    const distInput = document.getElementById('f-distance').value;
+    const distKm = parseFloat(distInput);
+
+    if (!isNaN(distKm) && distKm > 0) {
+      let fare = 0;
+      if (selectedType === 'Jastip resto/toko') {
+        if (distKm <= 2) { fare = 8000; }
+        else if (distKm <= 3) { fare = 8000 + (Math.ceil((distKm - 2) * 20) * 100); }
+        else if (distKm <= 4) { fare = 10000 + (Math.ceil((distKm - 3) * 20) * 100); }
+        else if (distKm <= 5) { fare = 12000 + (Math.ceil((distKm - 4) * 20) * 200); }
+        else { fare = 12000 + (Math.ceil((distKm - 5) * 20) * 130); }
+      } else {
+        if (distKm <= 1) { fare = 4300; }
+        else if (distKm <= 2) { fare = 4300 + (Math.ceil((distKm - 1) * 20) * 85); }
+        else if (distKm <= 3) { fare = 6000 + (Math.ceil((distKm - 2) * 20) * 50); }
+        else if (distKm <= 4) { fare = 7000 + (Math.ceil((distKm - 3) * 20) * 150); }
+        else if (distKm <= 5) { fare = 10000 + (Math.ceil((distKm - 4) * 20) * 100); }
+        else { fare = 12000 + (Math.ceil((distKm - 5) * 20) * 125); }
+      }
+
+      window.currentOrderDist = distKm;
+      window.currentOrderFare = Math.round(fare);
+      document.getElementById('display-fare').textContent = 'Rp ' + window.currentOrderFare.toLocaleString('id-ID');
+    } else {
+      window.currentOrderDist = null;
+      window.currentOrderFare = null;
+      document.getElementById('display-fare').textContent = 'Rp 0';
+    }
+  };
+
+  window.doUpload = async function() {
+    const pickupLoc = document.getElementById('f-pickup-loc').value.trim();
+    const pickupDetail = document.getElementById('f-pickup-detail').value.trim();
+    const delivLoc = document.getElementById('f-delivery-loc').value.trim();
+    const delivDetail = document.getElementById('f-delivery-detail').value.trim();
+    const catatan = document.getElementById('f-catatan').value.trim();
+    const waktuJadwal = document.getElementById('f-waktu-jadwal').value;
+    
+    let contactName = '', contactWA = '';
+    if (selectedType === 'Kirim Instan') {
+      contactName = document.getElementById('f-pengirim-nama').value.trim();
+      contactWA = document.getElementById('f-pengirim-wa').value.trim();
+    } else {
+      contactName = document.getElementById('f-penerima-nama').value.trim();
+      contactWA = document.getElementById('f-penerima-wa').value.trim();
+    }
+
+    if (!pickupLoc || !delivLoc || !contactName || !contactWA || window.currentOrderFare === null) { 
+      showToast('Harap lengkapi semua data wajib (*), termasuk Jarak Tempuh.'); return; 
+    }
+    if (window.waktuType === 'Jadwalkan' && !waktuJadwal) {
+      showToast('Harap pilih jam dan tanggal jika memilih Jadwalkan.'); return;
+    }
+
+    showLoading('Menyimpan Data Pesanan...');
+    
+    try {
+      const newOrder = {
+        orderNo: "JSTP-" + Date.now().toString().slice(-6),
+        type: selectedType,
+        pickupAddress: pickupLoc,
+        pickupDetail: pickupDetail,
+        deliveryAddress: delivLoc,
+        deliveryDetail: delivDetail,
+        catatan: catatan,
+        waktuTipe: window.waktuType,
+        waktuJadwal: waktuJadwal,
+        contactName: contactName,
+        contactWA: contactWA,
+        distanceKm: window.currentOrderDist,
+        fare: window.currentOrderFare,
+        uploadedAt: new Date().toISOString(),
+        uploader: currentUserUid,
+        status: 'menunggu'
+      };
+
+      const docRef = await addDoc(collection(db, "orders"), newOrder);
+      
+      document.getElementById('sfx-create').play().catch(e => console.log('Autoplay ditahan browser', e));
+
+      setTimeout(() => { updateDoc(docRef, { status: 'diproses' }).catch(e=>console.error(e)); }, 5000);
+
+      ['f-pickup-loc','f-pickup-detail','f-delivery-loc','f-delivery-detail','f-catatan','f-waktu-jadwal','f-penerima-nama','f-penerima-wa','f-pengirim-nama','f-pengirim-wa','f-distance'].forEach(id => {
+         if (document.getElementById(id)) document.getElementById(id).value = '';
+      });
+      window.currentOrderDist = null; window.currentOrderFare = null;
+      document.getElementById('display-fare').textContent = 'Rp 0';
+      window.setWaktu('Langsung'); 
+      
+      hideLoading();
+      showToast('Pesanan Berhasil Disimpan');
+      window.switchPage('proses');
+
+    } catch (error) {
+      hideLoading();
+      showToast('Gagal Simpan: ' + error.message);
+    }
+  }
+
+  function subscribeOrders() {
+    if(unsubscribeOrders) unsubscribeOrders();
+    if(!currentUserUid) return;
+
+    const q = query(collection(db, "orders"), where("uploader", "==", currentUserUid));
+    
+    unsubscribeOrders = onSnapshot(q, (snapshot) => {
+      let allOrders = [];
+      snapshot.forEach(doc => allOrders.push({id: doc.id, ...doc.data()}));
+      allOrders.sort((a, b) => new Date(b.uploadedAt || 0) - new Date(a.uploadedAt || 0));
+      
+      window.activeOrdersData = allOrders.filter(o => o.status !== 'selesai');
+      window.historyOrdersData = allOrders.filter(o => o.status === 'selesai');
+      
+      if(document.getElementById('page-proses').classList.contains('active')) window.renderProses();
+      if(document.getElementById('page-archive').classList.contains('active')) window.renderArchive();
+    }, (error) => { console.error("Gagal menarik data pesanan:", error); });
+  }
+
+  // TAMPILKAN ATAU SEMBUNYIKAN DETAIL PESANAN
+  window.toggleDetail = function(id) {
+     const detailElem = document.getElementById('detail-' + id);
+     const iconElem = document.getElementById('icon-expand-' + id);
+     if (detailElem.classList.contains('d-none')) {
+         detailElem.classList.remove('d-none');
+         iconElem.textContent = 'expand_less';
+     } else {
+         detailElem.classList.add('d-none');
+         iconElem.textContent = 'expand_more';
+     }
+  }
+
+  window.ingatkanDriver = function(id) {
+     const order = window.activeOrdersData.find(o => o.id === id);
+     if(!order) return;
+     const textWA = `*Halo, mohon segera proses pesanan saya!*\nKategori: ${order.type}\nLokasi Pengambilan: ${order.pickupAddress} ${order.pickupDetail ? '('+order.pickupDetail+')' : ''}\nLokasi Pengiriman: ${order.deliveryAddress} ${order.deliveryDetail ? '('+order.deliveryDetail+')' : ''}\nCatatan: ${order.catatan || '-'}\nData Penerima: ${order.contactName} - ${order.contactWA}\nArgo: Rp ${(order.fare || 0).toLocaleString('id-ID')}\n\nTolong segera direspons, terima kasih!`;
+     window.open('https://wa.me/6285138238914?text=' + encodeURIComponent(textWA), '_blank');
+  }
+
+  // PERBAIKAN FUNGSI RENDER PROSES (CLEAN UI & GIF)
+  window.renderProses = function() {
+    const container = document.getElementById('proses-results');
+    const dancingGif = document.getElementById('dancing-container');
+    
+    // Logic untuk memunculkan GIF menggunakan manipulasi style langsung (bulletproof)
+    if(window.activeOrdersData.length === 0) {
+      container.innerHTML = '<p style="text-align:center; color:gray; padding: 20px;">Tidak ada pesanan yang sedang diproses.</p>';
+      dancingGif.style.display = 'none';
+      hasPlayedProcessSound = false;
+      return;
+    }
+
+    dancingGif.style.display = 'block';
+    if (!hasPlayedProcessSound) {
+      document.getElementById('sfx-process').play().catch(e => console.log(e));
+      hasPlayedProcessSound = true;
+    }
+
+    let htmlContent = '';
+    window.activeOrdersData.forEach(o => {
+      let isDiproses = o.status === 'diproses';
+      let isMenunggu = o.status === 'menunggu';
+      const estimasiWaktu = (o.type === 'Jastip resto/toko') ? '45 Menit' : '30 Menit';
+
+      // HTML Card Lebih Ringkas dan Rapi
+      htmlContent += `
+        <div class="card" id="card-${o.id}" style="padding-bottom:12px;">
+          
+          <div onclick="window.toggleDetail('${o.id}')" style="cursor:pointer;">
+             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px;">
+                <div>
+                  <div style="font-size:16px; font-weight:700; color:var(--md-primary);">${o.orderNo}</div>
+                  <div style="font-size:12px; color:var(--md-on-surface-variant); margin-top:2px;">${o.type}</div>
+                </div>
+                <div style="text-align:right;">
+                   <span class="order-timer" data-time="${o.uploadedAt}" style="font-size:11px; color:var(--md-on-surface-variant); display:block;">00:00 berlalu</span>
+                   <span style="font-size:11px; font-weight:700; color:var(--md-primary); background:var(--md-primary-light); padding: 2px 6px; border-radius: 4px; display:inline-block; margin-top:4px;">Est: ${estimasiWaktu}</span>
+                </div>
+             </div>
+             
+             <div class="timeline-container" style="margin: 20px 0 12px;">
+                <div class="timeline-track">
+                   <div class="timeline-segment ${isMenunggu ? 'anim-flow' : 'solid-flow'}"></div>
+                   <div class="timeline-segment ${isDiproses ? 'anim-flow' : ''}"></div>
+                </div>
+                <div class="timeline-step ${isMenunggu ? 'active' : 'done'}">
+                   <div class="timeline-circle"><span class="material-symbols-outlined">schedule</span></div>
+                   <div class="timeline-label">Menunggu</div>
+                </div>
+                <div class="timeline-step ${isDiproses ? 'active' : ''}">
+                   <div class="timeline-circle"><span class="material-symbols-outlined">two_wheeler</span></div>
+                   <div class="timeline-label">Di Jalan</div>
+                </div>
+                <div class="timeline-step">
+                   <div class="timeline-circle"><span class="material-symbols-outlined">check_circle</span></div>
+                   <div class="timeline-label">Selesai</div>
+                </div>
+             </div>
+
+             <div style="text-align:center; margin-top:-8px; color:var(--md-on-surface-variant); font-size:12px; display:flex; justify-content:center; align-items:center;">
+                <span id="icon-expand-${o.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span> Detail Pesanan
+             </div>
+          </div>
+
+          <div id="detail-${o.id}" class="d-none" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--md-outline);">
+              <div style="font-size:13px; background:var(--md-surface-3); padding:12px; border-radius:8px; line-height: 1.6; color:var(--md-on-surface);">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                     <span><b>Argo/Biaya:</b></span> <span style="color:var(--md-primary); font-weight:700;">Rp ${(o.fare || 0).toLocaleString('id-ID')}</span>
+                  </div>
+                  <b>Kontak:</b> ${o.contactName} (${o.contactWA})<br>
+                  <b>Ambil:</b> ${o.pickupDetail || o.pickupAddress}<br>
+                  <b>Antar:</b> ${o.deliveryDetail || o.deliveryAddress}<br>
+                  ${o.catatan ? `<b>Catatan:</b> ${o.catatan}` : ''}
+              </div>
+              
+              <div class="action-btns-grid">
+                ${isMenunggu ? `
+                  <button class="btn-primary" style="background:#25D366;" onclick="window.ingatkanDriver('${o.id}')">
+                     <span class="material-symbols-outlined">notifications_active</span> Ingatkan Driver (WA)
+                  </button>
+                ` : ''}
+
+                ${isDiproses ? `
+                  <a href="https://wa.me/6285138238914" target="_blank" class="btn-primary" style="background:#25D366; text-decoration:none;">
+                     <span class="material-symbols-outlined">chat</span> Hubungi Driver
+                  </a>
+                ` : ''}
+
+                <button class="btn-primary" onclick="window.selesaiOrder('${o.id}')" ${!isDiproses ? 'disabled title="Menunggu driver"' : ''}>
+                   <span class="material-symbols-outlined">task_alt</span> Konfirmasi Pesanan Selesai
+                </button>
+              </div>
+          </div>
+
+        </div>
+      `;
+    });
+    
+    container.innerHTML = htmlContent;
+    window.updateTimers(); 
+  }
+
+  // Waktu Berjalan
+  window.updateTimers = function() {
+    document.querySelectorAll('.order-timer').forEach(el => {
+        const startTime = new Date(el.getAttribute('data-time')).getTime();
+        const now = new Date().getTime();
+        const diff = Math.max(0, now - startTime);
+        
+        const m = Math.floor(diff / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        
+        el.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')} berlalu`;
+    });
+  };
+  setInterval(window.updateTimers, 1000);
+
+  window.selesaiOrder = async function(id) {
+    if (!confirm('Apakah pesanan ini benar-benar telah selesai?')) return;
+    showLoading('Menyelesaikan pesanan...');
+    try {
+      await updateDoc(doc(db, "orders", id), { status: 'selesai' });
+      showToast('Pesanan selesai & dipindahkan ke Riwayat');
+    } catch(e) { 
+      console.error(e);
+      showToast('Gagal mengubah status pesanan');
+    } finally {
+      hideLoading();
+    }
+  }
+
+  // PERBAIKAN UI RIWAYAT (Lebih Profesional)
+  window.renderArchive = function() {
+    const searchVal = document.getElementById('search-input').value.toLowerCase();
+    const results = document.getElementById('archive-results');
+    
+    let filtered = window.historyOrdersData.filter(e => e.contactName && e.contactName.toLowerCase().includes(searchVal));
+
+    if (!filtered.length) { 
+       results.innerHTML = '<p style="text-align:center; color:gray; padding: 20px;">Tidak ada riwayat ditemukan.</p>'; 
+       return; 
+    }
+
+    let htmlContent = '';
+    filtered.forEach(entry => {
+      let iconType = entry.type === 'Kirim Instan' ? 'local_shipping' : (entry.type === 'Ambil Instan' ? 'home_pin' : 'storefront');
+      
+      htmlContent += `
+        <div class="archive-card">
+          <div class="archive-header">
+            <div class="archive-title">
+               <span class="material-symbols-outlined" style="font-size:18px; color:var(--md-primary)">${iconType}</span>
+               ${entry.contactName}
+            </div>
+            <div class="archive-date">${new Date(entry.uploadedAt).toLocaleDateString('id-ID')}</div>
+          </div>
+          <div class="archive-body">
+             <div style="display:flex; gap:6px;">
+                <span class="badge" style="background:var(--md-primary-light); color:var(--md-primary);">${entry.distanceKm || 0} KM</span>
+                <span class="badge" style="background:#E6F4EA; color:#137333;">Selesai</span>
+             </div>
+             <div class="archive-price">Rp ${(entry.fare || 0).toLocaleString('id-ID')}</div>
+          </div>
+        </div>`;
+    });
+    results.innerHTML = htmlContent;
+  }
+
+  window.onSearch = function() {
+    const v = document.getElementById('search-input').value;
+    document.getElementById('search-clear').classList.toggle('visible', v.length > 0);
+    window.renderArchive();
+  }
+  
+  window.clearSearch = function() { document.getElementById('search-input').value = ''; window.onSearch(); }
+
+  let _toastT;
+  function showToast(msg) {
+    document.getElementById('toast-msg').textContent = msg;
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    clearTimeout(_toastT);
+    _toastT = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+</script>
+</body>
+</html>
