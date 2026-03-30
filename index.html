@@ -4,145 +4,587 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>JastipUnnes</title>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 <style>
   :root {
-    --md-primary: #1A73E8; --md-primary-hover: #1557B0; --md-primary-light: #E8F0FE;
-    --md-secondary: #1A73E8; --md-error: #D93025; --md-surface: #FFFFFF;
-    --md-surface-2: #F8F9FA; --md-surface-3: #F1F3F4; --md-on-surface: #202124;
-    --md-on-surface-variant: #5F6368; --md-outline: #DADCE0;
-    --md-radius-sm: 8px; --md-radius-md: 12px; --md-radius-full: 100px;
-    --font-main: 'Google Sans', 'Roboto', sans-serif;
+    --black: #000000;
+    --white: #FFFFFF;
+    --gray-100: #F6F6F6;
+    --gray-200: #EBEBEB;
+    --gray-300: #D4D4D4;
+    --gray-400: #9A9A9A;
+    --gray-500: #6B6B6B;
+    --gray-600: #3D3D3D;
+    --gray-700: #2A2A2A;
+    --gray-800: #1A1A1A;
+    --gray-900: #111111;
+    --green: #06C167;
+    --green-dark: #048A48;
+    --red: #EE2434;
+    --amber: #F5A524;
+    --surface: #FFFFFF;
+    --surface-overlay: rgba(0,0,0,0.04);
+    --font: 'DM Sans', sans-serif;
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 100px;
   }
-  
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font-main); background: var(--md-surface-2); color: var(--md-on-surface); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-  .g-blue { color: var(--md-primary) !important; }
+
+  body {
+    font-family: var(--font);
+    background: var(--gray-100);
+    color: var(--black);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
   .d-none { display: none !important; }
   .text-center { text-align: center; }
 
-  #splash { position: fixed; inset: 0; z-index: 9000; background: var(--md-surface); display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; padding: 20px 0;}
+  /* ─── SPLASH / AUTH ─── */
+  #splash {
+    position: fixed; inset: 0; z-index: 9000;
+    background: var(--black);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    overflow-y: auto;
+    padding: 0;
+  }
   #splash.hidden { display: none; }
-  .splash-logo { display: flex; align-items: center; justify-content: center; margin-bottom: 16px; margin-top: auto;}
-  .splash-logo .material-symbols-outlined { font-size: 64px; }
-  .splash-title { font-size: 28px; font-weight: 700; color: var(--md-on-surface); margin-bottom: 4px; letter-spacing: -0.5px; }
-  .splash-sub { font-size: 14px; color: var(--md-on-surface-variant); margin-bottom: 32px; }
-  
-  .login-card { width: calc(100% - 40px); max-width: 360px; background: var(--md-surface); border: 1px solid var(--md-outline); border-radius: var(--md-radius-md); padding: 24px; margin-bottom: auto;}
-  .auth-tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--md-surface-3); }
-  .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: 500; color: var(--md-on-surface-variant); font-size: 15px; }
-  .auth-tab.active { color: var(--md-primary); border-bottom: 2px solid var(--md-primary); margin-bottom: -2px; }
-  
-  .field-wrap { margin-bottom: 16px; }
-  .field { width: 100%; padding: 12px 14px; border-radius: var(--md-radius-sm); border: 1px solid var(--md-outline); background: var(--md-surface); font-family: var(--font-main); font-size: 15px; color: var(--md-on-surface); outline: none; transition: border 0.2s; }
-  .field:focus { border: 2px solid var(--md-primary); padding: 11px 13px; }
-  .field:disabled, .field[readonly] { background: var(--md-surface-3); color: var(--md-on-surface-variant); cursor: not-allowed; }
-  
-  .btn-primary, .btn-secondary { width: 100%; padding: 12px; border: none; cursor: pointer; border-radius: var(--md-radius-full); font-family: var(--font-main); font-size: 14px; font-weight: 500; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-primary { background: var(--md-primary); color: #fff; }
-  .btn-primary:hover { background: var(--md-primary-hover); }
-  .btn-primary:disabled { background: var(--md-outline); cursor: not-allowed; color: var(--md-on-surface-variant); }
-  .btn-secondary { background: var(--md-surface); color: var(--md-on-surface); border: 1px solid var(--md-outline); margin-top: 10px; }
-  .btn-secondary:hover { background: var(--md-surface-2); }
-  
-  .btn-google { background: #fff; color: #3c4043; border: 1px solid var(--md-outline); margin-top: 8px; }
-  .btn-google:hover { background: var(--md-surface-2); }
-  .btn-google img { width: 18px; margin-right: 8px; }
 
+  .splash-hero {
+    flex: 1; width: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 24px 24px;
+  }
+  .splash-wordmark {
+    font-size: 52px; font-weight: 800;
+    color: var(--white); letter-spacing: -2px;
+    line-height: 1;
+  }
+  .splash-wordmark span { color: var(--green); }
+  .splash-tagline {
+    font-size: 15px; font-weight: 500;
+    color: var(--gray-400); margin-top: 10px;
+    letter-spacing: 0.02em; text-align: center;
+  }
+
+  .auth-sheet {
+    width: 100%; max-width: 500px;
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    padding: 28px 24px 40px;
+  }
+  .auth-handle {
+    width: 36px; height: 4px;
+    background: var(--gray-200); border-radius: 2px;
+    margin: 0 auto 24px;
+  }
+  .auth-tabs {
+    display: flex; gap: 4px;
+    background: var(--gray-100);
+    border-radius: var(--radius-full);
+    padding: 4px; margin-bottom: 24px;
+  }
+  .auth-tab {
+    flex: 1; text-align: center;
+    padding: 10px; border-radius: var(--radius-full);
+    cursor: pointer; font-weight: 600;
+    font-size: 14px; color: var(--gray-500);
+    transition: all 0.2s;
+  }
+  .auth-tab.active {
+    background: var(--black); color: var(--white);
+  }
+
+  /* ─── INPUTS ─── */
+  .field-wrap { margin-bottom: 14px; }
+  .field-label { font-size: 12px; font-weight: 600; color: var(--gray-500); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.06em; }
+  .field-required { color: var(--red); }
+
+  .field {
+    width: 100%; padding: 14px 16px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--gray-200);
+    background: var(--gray-100);
+    font-family: var(--font); font-size: 15px;
+    font-weight: 500; color: var(--black);
+    outline: none; transition: all 0.15s;
+  }
+  .field:focus {
+    border-color: var(--black);
+    background: var(--white);
+  }
+  .field:disabled, .field[readonly] {
+    background: var(--gray-100); color: var(--gray-400);
+    cursor: not-allowed;
+  }
+
+  /* ─── BUTTONS ─── */
+  .btn-primary, .btn-secondary {
+    width: 100%; padding: 16px;
+    border: none; cursor: pointer;
+    border-radius: var(--radius-full);
+    font-family: var(--font); font-size: 15px; font-weight: 700;
+    transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    letter-spacing: -0.01em;
+  }
+  .btn-primary { background: var(--black); color: var(--white); }
+  .btn-primary:hover { background: var(--gray-800); }
+  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary {
+    background: var(--white); color: var(--black);
+    border: 1.5px solid var(--gray-200); margin-top: 10px;
+  }
+  .btn-secondary:hover { background: var(--gray-100); }
+
+  .btn-google {
+    background: var(--white); color: var(--black);
+    border: 1.5px solid var(--gray-200); margin-top: 12px;
+  }
+  .btn-google:hover { background: var(--gray-100); }
+  .btn-google img { width: 18px; }
+
+  .or-divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 16px 0;
+    font-size: 12px; font-weight: 600; color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+  .or-divider::before, .or-divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--gray-200);
+  }
+
+  /* ─── APP SHELL ─── */
   #app { display: none; flex-direction: column; min-height: 100vh; }
   #app.visible { display: flex; }
 
-  .top-bar { position: sticky; top: 0; z-index: 100; background: var(--md-surface); border-bottom: 1px solid var(--md-outline); padding: 0 16px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
-  .top-bar-left { display: flex; align-items: center; gap: 10px; }
-  .top-bar-title { font-size: 18px; font-weight: 500; color: var(--md-on-surface); }
-  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--md-primary); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; text-transform: uppercase; overflow: hidden; }
-  .avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .icon-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--md-on-surface-variant); }
-  
-  .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--md-surface); border-top: 1px solid var(--md-outline); display: flex; height: 64px; }
-  .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: none; background: none; color: var(--md-on-surface-variant); }
-  .nav-indicator { width: 64px; height: 32px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
-  .nav-item .label { font-size: 12px; font-weight: 500; }
-  .nav-item.active { color: var(--md-on-surface); }
-  .nav-item.active .nav-indicator { background: var(--md-primary-light); color: var(--md-on-surface); }
+  .top-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--black);
+    padding: 0 20px; height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .top-bar-brand {
+    font-size: 22px; font-weight: 800;
+    color: var(--white); letter-spacing: -1px;
+  }
+  .top-bar-brand span { color: var(--green); }
+  .top-bar-actions { display: flex; align-items: center; gap: 8px; }
 
-  .content { flex: 1; padding: 16px 16px 88px; max-width: 600px; margin: 0 auto; width: 100%; }
+  .avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--green); color: var(--black);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; text-transform: uppercase;
+    overflow: hidden; cursor: pointer;
+  }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: none; background: var(--gray-800);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--white);
+  }
+  .icon-btn .material-symbols-outlined { font-size: 18px; }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: var(--black);
+    display: flex; height: 68px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .nav-item {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    cursor: pointer; border: none; background: none;
+    color: var(--gray-500); gap: 4px;
+    position: relative;
+  }
+  .nav-item .material-symbols-outlined { font-size: 22px; }
+  .nav-item .label { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+  .nav-item.active { color: var(--white); }
+  .nav-active-dot {
+    position: absolute; top: 8px;
+    width: 4px; height: 4px; border-radius: 50%;
+    background: var(--green); opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .nav-item.active .nav-active-dot { opacity: 1; }
+
+  /* ─── CONTENT ─── */
+  .content { flex: 1; padding: 0 0 80px; max-width: 600px; margin: 0 auto; width: 100%; }
   .page { display: none; }
   .page.active { display: block; }
-  .section-header { margin-bottom: 16px; padding: 8px 0; display: flex; align-items: center; gap: 8px; }
-  .section-header h2 { font-size: 22px; font-weight: 400; color: var(--md-on-surface); }
-  
-  .card { background: var(--md-surface); border-radius: var(--md-radius-md); padding: 16px; margin-bottom: 16px; border: 1px solid var(--md-outline); position: relative; }
-  .card-title { font-size: 14px; font-weight: 500; color: var(--md-on-surface); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-  .field-label { font-size: 12px; font-weight: 500; color: var(--md-on-surface-variant); margin-bottom: 6px; display: block; }
-  .field-required { color: var(--md-error); }
 
+  .page-header {
+    padding: 20px 20px 0;
+    margin-bottom: 4px;
+  }
+  .page-title {
+    font-size: 28px; font-weight: 800;
+    color: var(--black); letter-spacing: -0.8px;
+  }
+  .page-sub {
+    font-size: 14px; font-weight: 500;
+    color: var(--gray-400); margin-top: 4px;
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--white);
+    margin: 12px 16px 0;
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    border: none;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .card-title {
+    font-size: 12px; font-weight: 700;
+    color: var(--gray-400); margin-bottom: 14px;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .material-symbols-outlined { font-size: 16px; }
+
+  /* ─── CHIPS ─── */
   .chips-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
-  .chip { padding: 6px 12px; border-radius: 8px; border: 1px solid var(--md-outline); background: var(--md-surface); font-size: 14px; cursor: pointer; color: var(--md-on-surface-variant); display: flex; align-items: center; gap: 6px; }
-  .chip.selected { background: var(--md-primary-light); border-color: var(--md-primary-light); color: var(--md-primary); font-weight: 500; }
+  .chip {
+    padding: 10px 16px; border-radius: var(--radius-full);
+    border: 1.5px solid var(--gray-200);
+    background: var(--white); font-size: 14px; font-weight: 600;
+    cursor: pointer; color: var(--gray-500);
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s; font-family: var(--font);
+  }
+  .chip.selected {
+    background: var(--black); border-color: var(--black);
+    color: var(--white);
+  }
 
-  .notice-card { background: #FFF3E0; border-left: 4px solid #FF9800; padding: 12px; border-radius: 4px; margin-top: 12px; font-size: 13px; line-height: 1.5; color: #E65100; }
-  
-  .search-bar { background: var(--md-surface-2); border-radius: var(--md-radius-full); display: flex; align-items: center; padding: 4px 16px; margin-bottom: 12px; }
-  .search-bar input { flex: 1; border: none; background: none; outline: none; padding: 10px 8px; font-size: 15px; font-family: var(--font-main); }
-  .search-clear { background: none; border: none; color: var(--md-on-surface-variant); cursor: pointer; display: none; }
+  /* ─── NOTICE ─── */
+  .notice-card {
+    background: #FFF9E6; border-left: 3px solid var(--amber);
+    padding: 12px 14px; border-radius: var(--radius-sm);
+    margin-top: 12px; font-size: 13px; line-height: 1.5;
+    color: #7A5500; font-weight: 500;
+  }
+
+  /* ─── FARE DISPLAY ─── */
+  .fare-display {
+    background: var(--black); border-radius: var(--radius-lg);
+    padding: 20px; margin-top: 4px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .fare-label { font-size: 13px; font-weight: 600; color: var(--gray-400); }
+  .fare-amount { font-size: 28px; font-weight: 800; color: var(--white); letter-spacing: -1px; }
+
+  /* ─── SEARCH BAR ─── */
+  .search-bar {
+    margin: 16px 16px 0;
+    background: var(--white);
+    border-radius: var(--radius-full);
+    display: flex; align-items: center;
+    padding: 4px 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .search-bar input {
+    flex: 1; border: none; background: none; outline: none;
+    padding: 12px 8px; font-size: 15px; font-weight: 500;
+    font-family: var(--font);
+  }
+  .search-clear {
+    background: none; border: none; color: var(--gray-400);
+    cursor: pointer; display: none;
+  }
   .search-clear.visible { display: block; }
 
-  /* Redesigned Archive UI */
-  .archive-card { background: var(--md-surface); border-radius: var(--md-radius-md); padding: 16px; margin-bottom: 12px; border: 1px solid var(--md-outline); display: flex; flex-direction: column; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
-  .archive-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed var(--md-outline); padding-bottom: 10px; }
-  .archive-title { font-weight: 600; font-size: 15px; color: var(--md-on-surface); display:flex; align-items:center; gap:8px;}
-  .archive-date { font-size: 12px; color: var(--md-on-surface-variant); }
-  .archive-body { display: flex; justify-content: space-between; align-items: center; }
-  .archive-price { font-size: 16px; font-weight: 700; color: var(--md-primary); }
-  .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+  /* ─── ORDER CARD (Proses) ─── */
+  .order-card {
+    background: var(--white);
+    margin: 12px 16px 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  .order-card-header {
+    background: var(--black); padding: 16px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    cursor: pointer;
+  }
+  .order-card-num { font-size: 16px; font-weight: 800; color: var(--white); letter-spacing: -0.5px; }
+  .order-card-type { font-size: 12px; font-weight: 600; color: var(--gray-400); margin-top: 2px; }
+  .order-card-right { text-align: right; }
+  .order-timer-pill {
+    font-size: 12px; font-weight: 700;
+    background: rgba(255,255,255,0.1);
+    color: var(--gray-300);
+    padding: 4px 10px; border-radius: var(--radius-full);
+    display: inline-block;
+  }
+  .est-pill {
+    font-size: 11px; font-weight: 700;
+    background: var(--green); color: var(--black);
+    padding: 3px 8px; border-radius: var(--radius-full);
+    display: inline-block; margin-top: 4px;
+  }
 
-  /* Animasi Garis Timeline */
-  .timeline-container { display: flex; align-items: center; justify-content: space-between; margin: 16px 0; position: relative; }
-  .timeline-track { position: absolute; top: 14px; left: 15%; right: 15%; height: 4px; background: var(--md-surface-3); z-index: 1; border-radius: 2px; display: flex; overflow: hidden; }
-  .timeline-segment { flex: 1; height: 100%; transition: background 0.3s; }
-  
+  .order-card-body { padding: 18px; }
+
+  /* ─── TIMELINE ─── */
+  .timeline-uber {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    position: relative; margin-bottom: 12px;
+  }
+  .tl-track {
+    position: absolute; top: 15px; left: 15%; right: 15%;
+    height: 3px; background: var(--gray-200);
+    border-radius: 2px;
+  }
+  .tl-fill {
+    height: 100%; border-radius: 2px;
+    background: var(--green); transition: width 0.5s;
+  }
+  .tl-step {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column;
+    align-items: center; flex: 1; gap: 8px;
+  }
+  .tl-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--gray-200);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  .tl-dot .material-symbols-outlined { font-size: 15px; color: var(--gray-400); }
+  .tl-step.active .tl-dot { background: var(--black); }
+  .tl-step.active .tl-dot .material-symbols-outlined { color: var(--white); }
+  .tl-step.done .tl-dot { background: var(--green); }
+  .tl-step.done .tl-dot .material-symbols-outlined { color: var(--black); }
+  .tl-label { font-size: 11px; font-weight: 600; color: var(--gray-400); text-align: center; }
+  .tl-step.active .tl-label { color: var(--black); font-weight: 700; }
+  .tl-step.done .tl-label { color: var(--green); }
+
+  .toggle-detail-btn {
+    display: flex; align-items: center; justify-content: center;
+    gap: 4px; font-size: 12px; font-weight: 600;
+    color: var(--gray-400); cursor: pointer;
+    padding: 4px 0 0; border: none; background: none;
+    width: 100%; font-family: var(--font);
+  }
+
+  .order-detail-panel {
+    border-top: 1px solid var(--gray-200); padding: 14px 18px 18px;
+  }
+  .detail-grid {
+    background: var(--gray-100); border-radius: var(--radius-md);
+    padding: 14px; font-size: 13px; line-height: 1.7;
+    color: var(--gray-600); font-weight: 500;
+  }
+  .detail-row {
+    display: flex; justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .detail-row:last-child { margin-bottom: 0; }
+  .detail-key { color: var(--gray-400); }
+  .detail-val { color: var(--black); font-weight: 600; text-align: right; max-width: 60%; }
+
+  .action-btns-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+
+  /* ─── BTN ACTION VARIANTS ─── */
+  .btn-green {
+    width: 100%; padding: 14px;
+    border: none; cursor: pointer;
+    border-radius: var(--radius-full);
+    font-family: var(--font); font-size: 14px; font-weight: 700;
+    background: var(--green); color: var(--black);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none; transition: all 0.15s;
+  }
+  .btn-green:hover { background: var(--green-dark); color: var(--white); }
+  .btn-green:active { transform: scale(0.98); }
+
+  /* ─── ARCHIVE CARD ─── */
+  .archive-card {
+    background: var(--white); margin: 10px 16px 0;
+    border-radius: var(--radius-lg); padding: 16px 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .archive-icon-wrap {
+    width: 44px; height: 44px; border-radius: var(--radius-md);
+    background: var(--gray-100); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .archive-icon-wrap .material-symbols-outlined { font-size: 22px; color: var(--gray-600); }
+  .archive-info { flex: 1; min-width: 0; }
+  .archive-name { font-size: 15px; font-weight: 700; color: var(--black); }
+  .archive-meta { font-size: 12px; font-weight: 500; color: var(--gray-400); margin-top: 3px; }
+  .archive-right { text-align: right; flex-shrink: 0; }
+  .archive-price { font-size: 16px; font-weight: 800; color: var(--black); letter-spacing: -0.5px; }
+  .archive-badge {
+    font-size: 11px; font-weight: 700;
+    background: #DCFCE7; color: var(--green-dark);
+    padding: 2px 8px; border-radius: var(--radius-full);
+    display: inline-block; margin-top: 4px;
+  }
+
+  /* ─── BADGE ─── */
+  .badge {
+    padding: 3px 8px; border-radius: var(--radius-full);
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  /* ─── MODAL ─── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 9500;
+    background: rgba(0,0,0,0.6);
+    display: none; align-items: flex-end; justify-content: center;
+    backdrop-filter: blur(2px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet {
+    background: var(--white);
+    border-radius: 24px 24px 0 0;
+    padding: 8px 24px 40px;
+    width: 100%; max-width: 500px;
+    max-height: 90vh; overflow-y: auto;
+  }
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: var(--gray-200); border-radius: 2px;
+    margin: 12px auto 20px;
+  }
+  .modal-title {
+    font-size: 22px; font-weight: 800;
+    color: var(--black); margin-bottom: 4px; letter-spacing: -0.5px;
+  }
+  .modal-sub {
+    font-size: 14px; font-weight: 500;
+    color: var(--gray-400); margin-bottom: 20px; line-height: 1.5;
+  }
+
+  /* ─── INFO LIST ─── */
+  .info-list { list-style: none; margin-bottom: 20px; }
+  .info-list li {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+    font-size: 14px; line-height: 1.5;
+  }
+  .info-list li:last-child { border-bottom: none; }
+  .info-list li .material-symbols-outlined {
+    font-size: 18px; color: var(--green); flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* ─── LOADING ─── */
+  #loading-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000; display: none;
+    flex-direction: column; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  #loading-overlay.visible { display: flex; }
+  .spinner {
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top: 3px solid var(--green);
+    border-radius: 50%; width: 40px; height: 40px;
+    animation: spin 0.8s linear infinite; margin-bottom: 14px;
+  }
+  #loading-text { font-weight: 700; color: var(--white); font-size: 15px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ─── TOAST ─── */
+  #toast {
+    position: fixed; bottom: 84px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--black); color: var(--white);
+    padding: 12px 20px; border-radius: var(--radius-full);
+    font-size: 14px; font-weight: 600; z-index: 10001;
+    display: none; align-items: center; gap: 8px;
+    white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  #toast.show { display: flex; }
+
+  /* ─── ANIMATED STRIPES ─── */
   .anim-flow {
-    background: repeating-linear-gradient(-45deg, var(--md-primary) 0, var(--md-primary) 10px, var(--md-primary-light) 10px, var(--md-primary-light) 20px);
+    background: repeating-linear-gradient(-45deg, var(--green) 0, var(--green) 10px, #04914D 10px, #04914D 20px);
     background-size: 28px 28px;
     animation: flow-stripes 1s linear infinite;
   }
-  .solid-flow { background: var(--md-primary); }
-  @keyframes flow-stripes { 0% { background-position: 0 0; } 100% { background-position: 28px 0; } }
+  .solid-flow { background: var(--green); }
+  @keyframes flow-stripes { to { background-position: 28px 0; } }
 
-  .timeline-step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; flex: 1; gap: 6px; }
-  .timeline-circle { width: 30px; height: 30px; border-radius: 50%; background: var(--md-surface); border: 2px solid var(--md-surface-3); display: flex; align-items: center; justify-content: center; transition: all 0.3s;}
-  .timeline-circle .material-symbols-outlined { font-size: 16px; color: var(--md-on-surface-variant); }
-  .timeline-step.active .timeline-circle { border-color: var(--md-primary); background: var(--md-primary-light); }
-  .timeline-step.active .timeline-circle .material-symbols-outlined { color: var(--md-primary); }
-  .timeline-step.done .timeline-circle { border-color: #25D366; background: #25D366; }
-  .timeline-step.done .timeline-circle .material-symbols-outlined { color: white; }
-  .timeline-label { font-size: 11px; color: var(--md-on-surface-variant); font-weight: 500; text-align: center; line-height: 1.2;}
-  .timeline-step.active .timeline-label { color: var(--md-primary); font-weight: 700; }
+  /* ─── WAKTU BUTTONS ─── */
+  .waktu-btns { display: flex; gap: 8px; margin-bottom: 8px; }
+  .btn-waktu {
+    flex: 1; padding: 12px;
+    border-radius: var(--radius-full);
+    border: 1.5px solid var(--gray-200);
+    background: var(--white);
+    font-family: var(--font); font-size: 14px; font-weight: 600;
+    cursor: pointer; color: var(--gray-500); transition: all 0.15s;
+  }
+  .btn-waktu.active {
+    background: var(--black); border-color: var(--black);
+    color: var(--white);
+  }
 
+  /* ─── SECTION HEADER IN FORM ─── */
+  .submit-area { padding: 16px; }
+
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    padding: 48px 24px; text-align: center;
+  }
+  .empty-state .material-symbols-outlined {
+    font-size: 48px; color: var(--gray-300); display: block; margin-bottom: 12px;
+  }
+  .empty-state p {
+    font-size: 15px; font-weight: 600; color: var(--gray-400);
+  }
+
+  /* ─── PROFILE AVATAR BIG ─── */
+  .avatar-big-wrap {
+    width: 80px; height: 80px; margin: 0 auto 12px;
+    border-radius: 50%; background: var(--gray-100);
+    overflow: hidden; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--gray-200);
+  }
+  .avatar-big-wrap span { font-size: 32px; color: var(--green); font-weight: 700; }
+  .avatar-big-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ─── INFO ROWS ─── */
+  .info-row {
+    display: flex; gap: 8px; margin-bottom: 10px;
+    align-items: flex-start;
+  }
+  .info-row .material-symbols-outlined {
+    font-size: 18px; color: var(--gray-400); flex-shrink: 0; margin-top: 1px;
+  }
+  .info-row-text { font-size: 14px; font-weight: 500; color: var(--gray-600); line-height: 1.5; }
+  .info-row-text strong { color: var(--black); }
+
+  /* ─── DARI FILE UTAMA (FAB & DANCING CHICKEN) ─── */
   .fab-wa { position: fixed; bottom: 80px; right: 16px; width: 56px; height: 56px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); z-index: 99; color: white; text-decoration: none; }
   .fab-wa img { width: 32px; height: 32px; }
 
-  #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #323232; color: #fff; padding: 12px 24px; border-radius: 4px; font-size: 14px; z-index: 10001; display: none; align-items: center; gap: 8px; text-align: center; white-space: nowrap;}
-  #toast.show { display: flex; }
-
-  .modal-overlay { position: fixed; inset: 0; z-index: 9500; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal-sheet { background: var(--md-surface); border-radius: 16px; padding: 24px; width: calc(100% - 32px); max-width: 400px; max-height: 90vh; overflow-y: auto; }
-  .modal-title { font-size: 20px; font-weight: 500; margin-bottom: 12px; color: var(--md-primary); }
-
-  #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-  #loading-overlay.visible { display: flex; }
-  .spinner { border: 4px solid var(--md-surface-3); border-top: 4px solid var(--md-primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 16px; }
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-  /* Perbaikan Animasi GIF - Pastikan z-index tinggi dan display none dinamis lewat JS murni */
   .dancing-container { position: fixed; bottom: 85px; left: 16px; z-index: 9999; pointer-events: none; display: none; }
   .dancing-container img { width: 80px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-  
-  /* Utilities untuk detail pesanan diproses */
-  .action-btns-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
 </style>
 </head>
 <body>
@@ -152,46 +594,51 @@
 
 <div id="loading-overlay">
   <div class="spinner"></div>
-  <p style="font-weight: 500; color: var(--md-on-surface);" id="loading-text">Memproses...</p>
+  <p id="loading-text">Memproses...</p>
 </div>
 
 <div class="modal-overlay" id="info-modal">
   <div class="modal-sheet">
-    <div class="modal-title"><span class="material-symbols-outlined" style="vertical-align: middle; margin-right: 6px;">info</span> Informasi JastipUnnes</div>
-    <div style="font-size: 14px; color: var(--md-on-surface); line-height: 1.6; margin-bottom: 20px;">
-      <p style="margin-bottom: 8px;"><strong>JastipUnnes</strong> adalah layanan penyewaan jasa untuk 3 kategori:</p>
-      <ul style="padding-left: 20px; margin-bottom: 12px;">
-        <li><strong>Jastip Resto/Toko:</strong> Membelikan barang/makanan dan mengantarkannya.</li>
-        <li><strong>Ambil Instan:</strong> Mengambil barang Anda yang sudah dibayar atau mengambil dari teman/keluarga.</li>
-        <li><strong>Kirim Instan:</strong> Mengirim barang dari Anda ke penerima yang ditentukan.</li>
-      </ul>
-      <p style="margin-bottom: 4px;"><strong>Waktu Operasional:</strong> 05.00 - 21.00 WIB</p>
-      <p style="margin-bottom: 4px;"><strong>Area Layanan:</strong> Semarang</p>
-      <p style="margin-bottom: 4px;"><strong>Ketentuan Pengguna:</strong> Mahasiswa UNNES / Teman atau Keluarga Mahasiswa UNNES.</p>
+    <div class="modal-handle"></div>
+    <div class="modal-title">Informasi JastipUnnes</div>
+    <div class="modal-sub">JastipUnnes adalah layanan penyewaan jasa untuk 3 kategori:</div>
+    <ul class="info-list">
+      <li>
+        <span class="material-symbols-outlined">storefront</span>
+        <div><strong>Jastip Resto/Toko</strong><br>Membelikan barang/makanan dan mengantarkannya.</div>
+      </li>
+      <li>
+        <span class="material-symbols-outlined">home_pin</span>
+        <div><strong>Ambil Instan</strong><br>Mengambil barang Anda yang sudah dibayar atau mengambil dari teman/keluarga.</div>
+      </li>
+      <li>
+        <span class="material-symbols-outlined">local_shipping</span>
+        <div><strong>Kirim Instan</strong><br>Mengirim barang dari Anda ke penerima yang ditentukan.</div>
+      </li>
+    </ul>
+    <div class="info-row"><span class="material-symbols-outlined">schedule</span><div class="info-row-text"><strong>Waktu Operasional:</strong> 05.00 - 21.00 WIB</div></div>
+    <div class="info-row"><span class="material-symbols-outlined">location_on</span><div class="info-row-text"><strong>Area Layanan:</strong> Semarang</div></div>
+    <div class="info-row"><span class="material-symbols-outlined">school</span><div class="info-row-text"><strong>Ketentuan Pengguna:</strong> Mahasiswa UNNES / Teman atau Keluarga Mahasiswa UNNES.</div></div>
+    <div style="margin-top:20px;">
+      <button class="btn-primary" onclick="window.closeInfoModal()">Mengerti</button>
     </div>
-    <button class="btn-primary" onclick="window.closeInfoModal()">Mengerti</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="profile-modal">
   <div class="modal-sheet">
+    <div class="modal-handle"></div>
     <div class="modal-title">Edit Profil</div>
-    <div class="text-center" style="margin-bottom: 20px;">
-      <div style="width: 80px; height: 80px; margin: 0 auto 12px; border-radius: 50%; background: var(--md-primary-light); overflow: hidden; display: flex; align-items: center; justify-content: center;">
-        <img id="prof-preview-img" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-        <span id="prof-preview-text" style="font-size: 32px; color: var(--md-primary); font-weight: 500;">U</span>
+    <div class="text-center" style="margin-bottom:20px;">
+      <div class="avatar-big-wrap">
+        <img id="prof-preview-img" src="" style="display:none;">
+        <span id="prof-preview-text">U</span>
       </div>
-      <input type="file" id="f-prof-pic" accept="image/*" style="display: none;" onchange="window.previewAvatar(event)">
-      <button class="badge" style="background: var(--md-surface); border: 1px solid var(--md-outline); cursor:pointer;" onclick="document.getElementById('f-prof-pic').click()">Ganti Foto</button>
+      <input type="file" id="f-prof-pic" accept="image/*" style="display:none;" onchange="window.previewAvatar(event)">
+      <button class="badge" style="background:var(--gray-100); color:var(--gray-600); border:1.5px solid var(--gray-200); cursor:pointer; font-family:var(--font); font-size:12px; font-weight:700; padding:6px 14px; border-radius:var(--radius-full);" onclick="document.getElementById('f-prof-pic').click()">Ganti Foto</button>
     </div>
-    <div class="field-wrap">
-      <label class="field-label">Nama Lengkap</label>
-      <input class="field" id="f-prof-name" type="text" placeholder="Nama Anda">
-    </div>
-    <div class="field-wrap">
-      <label class="field-label">Nomor WhatsApp</label>
-      <input class="field" id="f-prof-phone" type="number" placeholder="08xxxxxxxx">
-    </div>
+    <div class="field-wrap"><label class="field-label">Nama Lengkap</label><input class="field" id="f-prof-name" type="text" placeholder="Nama Anda"></div>
+    <div class="field-wrap"><label class="field-label">Nomor WhatsApp</label><input class="field" id="f-prof-phone" type="number" placeholder="08xxxxxxxx"></div>
     <button class="btn-primary" onclick="window.saveProfile()">Simpan Perubahan</button>
     <button class="btn-secondary" onclick="window.closeProfileModal()">Batal</button>
   </div>
@@ -199,58 +646,43 @@
 
 <div class="modal-overlay" id="complete-profile-modal">
   <div class="modal-sheet">
+    <div class="modal-handle"></div>
     <div class="modal-title">Lengkapi Profil Anda</div>
-    <p style="font-size:13px; margin-bottom:16px; color:var(--md-on-surface-variant)">Silakan lengkapi nama dan nomor WhatsApp Anda untuk dapat melanjutkan.</p>
-    <div class="field-wrap">
-      <label class="field-label">Nama Lengkap <span class="field-required">*</span></label>
-      <input class="field" id="comp-name" type="text" placeholder="Nama Anda">
-    </div>
-    <div class="field-wrap">
-      <label class="field-label">Nomor WhatsApp <span class="field-required">*</span></label>
-      <input class="field" id="comp-phone" type="number" placeholder="08xxxxxxxx">
-    </div>
+    <div class="modal-sub">Silakan lengkapi nama dan nomor WhatsApp Anda untuk dapat melanjutkan.</div>
+    <div class="field-wrap"><label class="field-label">Nama Lengkap <span class="field-required">*</span></label><input class="field" id="comp-name" type="text" placeholder="Nama Anda"></div>
+    <div class="field-wrap"><label class="field-label">Nomor WhatsApp <span class="field-required">*</span></label><input class="field" id="comp-phone" type="number" placeholder="08xxxxxxxx"></div>
     <button class="btn-primary" onclick="window.saveCompleteProfile()">Simpan & Lanjutkan</button>
   </div>
 </div>
 
 <div id="splash">
-  <div class="splash-logo"><span class="material-symbols-outlined g-blue">local_shipping</span></div>
-  <div class="splash-title">JastipUnnes</div>
-  <div class="splash-sub">Sistem Manajemen Pengiriman & Titipan</div>
-  
-  <div class="login-card">
+  <div class="splash-hero">
+    <div class="splash-wordmark">Jastip<span>Unnes</span></div>
+    <div class="splash-tagline">Sistem Manajemen Pengiriman & Titipan</div>
+  </div>
+
+  <div class="auth-sheet">
+    <div class="auth-handle"></div>
     <div class="auth-tabs">
       <div class="auth-tab active" id="tab-login" onclick="window.switchAuth('login')">Masuk</div>
       <div class="auth-tab" id="tab-signup" onclick="window.switchAuth('signup')">Daftar</div>
     </div>
 
     <div id="auth-login-form">
-      <div class="field-wrap">
-        <input type="email" class="field" id="login-user" placeholder="Email" autocomplete="username">
-      </div>
-      <div class="field-wrap">
-        <input type="password" class="field" id="login-pass" placeholder="Password" autocomplete="current-password">
-      </div>
+      <div class="field-wrap"><input type="email" class="field" id="login-user" placeholder="Email" autocomplete="username"></div>
+      <div class="field-wrap"><input type="password" class="field" id="login-pass" placeholder="Password" autocomplete="current-password"></div>
       <button class="btn-primary" onclick="window.doLogin()">Masuk</button>
     </div>
 
     <div id="auth-signup-form" class="d-none">
-      <div class="field-wrap">
-        <input type="text" class="field" id="signup-name" placeholder="Nama Lengkap">
-      </div>
-      <div class="field-wrap">
-        <input type="number" class="field" id="signup-phone" placeholder="Nomor WhatsApp">
-      </div>
-      <div class="field-wrap">
-        <input type="email" class="field" id="signup-email" placeholder="Email Baru">
-      </div>
-      <div class="field-wrap">
-        <input type="password" class="field" id="signup-pass" placeholder="Password (Min 6 karakter)">
-      </div>
+      <div class="field-wrap"><input type="text" class="field" id="signup-name" placeholder="Nama Lengkap"></div>
+      <div class="field-wrap"><input type="number" class="field" id="signup-phone" placeholder="Nomor WhatsApp"></div>
+      <div class="field-wrap"><input type="email" class="field" id="signup-email" placeholder="Email Baru"></div>
+      <div class="field-wrap"><input type="password" class="field" id="signup-pass" placeholder="Password (Min 6 karakter)"></div>
       <button class="btn-primary" onclick="window.doSignup()">Daftar Akun</button>
     </div>
 
-    <div style="text-align:center; margin:20px 0 16px; font-size:12px; color:var(--md-on-surface-variant)">ATAU</div>
+    <div class="or-divider">ATAU</div>
     
     <button class="btn-primary btn-google" onclick="window.doGoogleAuth()">
       <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google"> Lanjutkan dengan Google
@@ -260,45 +692,41 @@
 
 <div id="app">
   <div class="top-bar">
-    <div class="top-bar-left">
-      <span class="material-symbols-outlined g-blue">local_shipping</span>
-      <span class="top-bar-title">JastipUnnes</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div class="avatar" id="user-avatar" onclick="window.openProfileModal()" style="cursor:pointer;" title="Profil">U</div>
+    <div class="top-bar-brand">Jastip<span>Unnes</span></div>
+    <div class="top-bar-actions">
+      <div class="avatar" id="user-avatar" onclick="window.openProfileModal()" title="Profil">U</div>
       <button class="icon-btn" onclick="window.doLogout()" title="Keluar"><span class="material-symbols-outlined">logout</span></button>
     </div>
   </div>
 
   <div class="content">
-    
+
     <div class="page active" id="page-upload">
-      <div class="section-header">
-        <h2>Buat Pesanan</h2>
+      <div class="page-header">
+        <div class="page-title">Buat Pesanan</div>
+        <div class="page-sub">Pilih layanan dan isi detail pesanan</div>
       </div>
 
       <div class="card">
         <div class="card-title"><span class="material-symbols-outlined">category</span> Kategori Layanan</div>
-        <div class="field-wrap" style="margin-bottom:0">
-          <div class="chips-wrap" id="type-chips">
-            <div class="chip selected" onclick="window.selectType(this,'Jastip resto/toko')">Jastip resto/toko</div>
-            <div class="chip" onclick="window.selectType(this,'Ambil Instan')">Ambil Instan</div>
-            <div class="chip" onclick="window.selectType(this,'Kirim Instan')">Kirim Instan</div>
-          </div>
-          <div id="notice-container" class="notice-card">
-            <strong>Pemberitahuan:</strong> Di awal perlu TF untuk beli barang/makanannya, ongkos dibayar setelah sampai (Cash/TF). COD sepenuhnya jika sudah pernah memesan layanan minimal 1x.
-          </div>
+        <div class="chips-wrap" id="type-chips">
+          <div class="chip selected" onclick="window.selectType(this,'Jastip resto/toko')">Jastip resto/toko</div>
+          <div class="chip" onclick="window.selectType(this,'Ambil Instan')">Ambil Instan</div>
+          <div class="chip" onclick="window.selectType(this,'Kirim Instan')">Kirim Instan</div>
+        </div>
+        <div id="notice-container" class="notice-card">
+          <strong>Pemberitahuan:</strong> Di awal perlu TF untuk beli barang/makanannya, ongkos dibayar setelah sampai (Cash/TF). COD sepenuhnya jika sudah pernah memesan layanan minimal 1x.
         </div>
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="material-symbols-outlined" id="icon-pickup">storefront</span> Lokasi Pengambilan <span class="field-required">*</span></div>
+        <div class="card-title"><span id="icon-pickup" class="material-symbols-outlined">storefront</span> <span id="label-pickup-title">Lokasi Pengambilan</span> <span class="field-required">*</span></div>
         <div class="field-wrap">
           <label class="field-label" id="label-pickup">Link Maps <span class="field-required">*</span></label>
           <div style="display:flex; gap:8px;">
             <input class="field" id="f-pickup-loc" type="text" placeholder="Masukkan Link Maps...">
-            <button class="btn-primary" id="btn-pickup-maps" style="width:auto; padding: 0 16px;" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
-            <button class="btn-primary d-none" id="btn-pickup-gps" style="width:auto; padding: 0 16px; background:var(--md-secondary);" onclick="window.getLocation('f-pickup-loc')"><span class="material-symbols-outlined">my_location</span></button>
+            <button class="btn-primary" id="btn-pickup-maps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
+            <button class="btn-primary d-none" id="btn-pickup-gps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);background:var(--gray-700);" onclick="window.getLocation('f-pickup-loc')"><span class="material-symbols-outlined">my_location</span></button>
           </div>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
@@ -313,8 +741,8 @@
           <label class="field-label" id="label-delivery">Titik Koordinat <span class="field-required">*</span></label>
           <div style="display:flex; gap:8px;">
             <input class="field" id="f-delivery-loc" type="text" placeholder="Tekan tombol GPS disamping..." readonly>
-            <button class="btn-primary d-none" id="btn-delivery-maps" style="width:auto; padding: 0 16px;" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
-            <button class="btn-primary" id="btn-delivery-gps" style="width:auto; padding: 0 16px; background:var(--md-secondary);" onclick="window.getLocation('f-delivery-loc')"><span class="material-symbols-outlined">my_location</span></button>
+            <button class="btn-primary d-none" id="btn-delivery-maps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
+            <button class="btn-primary" id="btn-delivery-gps" style="width:auto;padding:0 14px;border-radius:var(--radius-md);background:var(--gray-700);" onclick="window.getLocation('f-delivery-loc')"><span class="material-symbols-outlined">my_location</span></button>
           </div>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
@@ -330,74 +758,68 @@
           <textarea class="field" id="f-catatan" rows="2" placeholder="Cth: Tolong letakkan di teras, rumah warna hijau..."></textarea>
         </div>
         <div class="field-wrap" style="margin-bottom:0">
-           <label class="field-label">Waktu Pengambilan</label>
-           <div style="display:flex; gap:8px; margin-bottom:8px;">
-             <button class="btn-secondary" id="btn-langsung" style="flex:1; border-color:var(--md-primary); color:var(--md-primary); margin-top:0;" onclick="window.setWaktu('Langsung')">Langsung</button>
-             <button class="btn-secondary" id="btn-jadwal" style="flex:1; margin-top:0;" onclick="window.setWaktu('Jadwalkan')">Jadwalkan</button>
-           </div>
-           <input type="datetime-local" class="field d-none" id="f-waktu-jadwal">
+          <label class="field-label">Waktu Pengambilan</label>
+          <div class="waktu-btns">
+            <button class="btn-waktu active" id="btn-langsung" onclick="window.setWaktu('Langsung')">Langsung</button>
+            <button class="btn-waktu" id="btn-jadwal" onclick="window.setWaktu('Jadwalkan')">Jadwalkan</button>
+          </div>
+          <input type="datetime-local" class="field d-none" id="f-waktu-jadwal">
         </div>
       </div>
 
       <div class="card">
         <div class="card-title"><span class="material-symbols-outlined">person</span> Data Kontak <span class="field-required">*</span></div>
-        
         <div id="container-penerima">
-          <div class="field-wrap">
-            <label class="field-label">Nama Penerima <span class="field-required">*</span></label>
-            <input class="field" id="f-penerima-nama" type="text" placeholder="Nama Penerima Barang">
-          </div>
-          <div class="field-wrap" style="margin-bottom:0">
-            <label class="field-label">Nomor WhatsApp Penerima <span class="field-required">*</span></label>
-            <input class="field" id="f-penerima-wa" type="number" placeholder="08xxxxxxxx">
-          </div>
+          <div class="field-wrap"><label class="field-label">Nama Penerima <span class="field-required">*</span></label><input class="field" id="f-penerima-nama" type="text" placeholder="Nama Penerima Barang"></div>
+          <div class="field-wrap" style="margin-bottom:0"><label class="field-label">Nomor WhatsApp Penerima <span class="field-required">*</span></label><input class="field" id="f-penerima-wa" type="number" placeholder="08xxxxxxxx"></div>
         </div>
-
         <div id="container-pengirim" class="d-none">
-          <div class="field-wrap">
-            <label class="field-label">Nama Pengirim <span class="field-required">*</span></label>
-            <input class="field" id="f-pengirim-nama" type="text" placeholder="Nama Anda (Pengirim)">
-          </div>
-          <div class="field-wrap" style="margin-bottom:0">
-            <label class="field-label">Nomor WhatsApp Pengirim <span class="field-required">*</span></label>
-            <input class="field" id="f-pengirim-wa" type="number" placeholder="08xxxxxxxx">
-          </div>
+          <div class="field-wrap"><label class="field-label">Nama Pengirim <span class="field-required">*</span></label><input class="field" id="f-pengirim-nama" type="text" placeholder="Nama Anda (Pengirim)"></div>
+          <div class="field-wrap" style="margin-bottom:0"><label class="field-label">Nomor WhatsApp Pengirim <span class="field-required">*</span></label><input class="field" id="f-pengirim-wa" type="number" placeholder="08xxxxxxxx"></div>
         </div>
       </div>
 
-      <div class="card" style="background: var(--md-surface-2); border-color: var(--md-primary-light);">
-        <div class="card-title" style="color:var(--md-primary)"><span class="material-symbols-outlined">payments</span> Tarif & Jarak</div>
-        <div class="field-wrap">
+      <div class="card">
+        <div class="card-title"><span class="material-symbols-outlined">payments</span> Tarif & Jarak</div>
+        <div class="field-wrap" style="margin-bottom:0">
           <label class="field-label">Jarak Tempuh (KM) <span class="field-required">*</span></label>
           <div style="display:flex; gap:8px;">
             <input class="field" id="f-distance" type="number" step="0.1" min="0" placeholder="0.0" oninput="window.calculateArgoManual()">
-            <button class="btn-primary" style="width:auto; padding: 0 16px;" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
+            <button class="btn-primary" style="width:auto;padding:0 14px;border-radius:var(--radius-md);" onclick="window.openGoogleMaps()"><span class="material-symbols-outlined">map</span></button>
           </div>
         </div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
-          <span style="color:var(--md-on-surface-variant); font-size:14px;">Total Argo/Tarif:</span>
-          <strong id="display-fare" style="color:var(--md-primary); font-size:20px;">Rp 0</strong>
+        <div class="fare-display" style="margin-top:14px;">
+          <div>
+            <div class="fare-label">Total Argo / Tarif</div>
+          </div>
+          <strong id="display-fare" class="fare-amount">Rp 0</strong>
         </div>
       </div>
 
-      <button class="btn-primary" id="btn-upload" onclick="window.doUpload()">Buat Pesanan</button>
+      <div class="submit-area">
+        <button class="btn-primary" id="btn-upload" onclick="window.doUpload()" style="font-size:16px;">
+          <span class="material-symbols-outlined">bolt</span> Buat Pesanan
+        </button>
+      </div>
     </div>
 
     <div class="page" id="page-proses">
-      <div class="section-header">
-        <h2>Pesanan Diproses</h2>
+      <div class="page-header">
+        <div class="page-title">Pesanan Diproses</div>
+        <div class="page-sub">Pesanan aktif kamu</div>
       </div>
       <div id="proses-results"></div>
     </div>
 
     <div class="page" id="page-archive">
-      <div class="section-header">
-        <h2>Riwayat Selesai</h2>
+      <div class="page-header">
+        <div class="page-title">Riwayat Selesai</div>
+        <div class="page-sub">Pesanan yang sudah selesai</div>
       </div>
       <div class="search-bar">
-        <span class="material-symbols-outlined">search</span>
+        <span class="material-symbols-outlined" style="color:var(--gray-400); font-size:20px;">search</span>
         <input type="text" id="search-input" placeholder="Cari nama..." oninput="window.onSearch()">
-        <button class="search-clear" id="search-clear" onclick="window.clearSearch()"><span class="material-symbols-outlined" style="font-size:20px">close</span></button>
+        <button class="search-clear" id="search-clear" onclick="window.clearSearch()"><span class="material-symbols-outlined" style="font-size:20px;">close</span></button>
       </div>
       <div id="archive-results"></div>
     </div>
@@ -405,15 +827,18 @@
 
   <div class="bottom-nav">
     <button class="nav-item active" id="nav-upload" onclick="window.switchPage('upload')">
-      <div class="nav-indicator"><span class="material-symbols-outlined">add_box</span></div>
+      <div class="nav-active-dot"></div>
+      <span class="material-symbols-outlined">add_box</span>
       <span class="label">Buat Pesanan</span>
     </button>
     <button class="nav-item" id="nav-proses" onclick="window.switchPage('proses')">
-      <div class="nav-indicator"><span class="material-symbols-outlined">hourglass_top</span></div>
+      <div class="nav-active-dot"></div>
+      <span class="material-symbols-outlined">hourglass_top</span>
       <span class="label">Proses</span>
     </button>
     <button class="nav-item" id="nav-archive" onclick="window.switchPage('archive')">
-      <div class="nav-indicator"><span class="material-symbols-outlined">history</span></div>
+      <div class="nav-active-dot"></div>
+      <span class="material-symbols-outlined">history</span>
       <span class="label">Riwayat</span>
     </button>
   </div>
@@ -463,7 +888,6 @@
   window.currentOrderFare = null;
   window.tempAvatarData = null;
   window.isRegistering = false; 
-
   window.waktuType = 'Langsung';
   let hasPlayedProcessSound = false; 
 
@@ -522,7 +946,6 @@
     }
   }
 
-  // Auth Functions (sama seperti sebelumnya)...
   window.switchAuth = function(mode) {
     document.getElementById('tab-login').classList.remove('active');
     document.getElementById('tab-signup').classList.remove('active');
@@ -582,7 +1005,6 @@
     } finally { hideLoading(); }
   }
 
-  // Lengkapi Profil dll...
   window.saveCompleteProfile = async function() {
     const name = document.getElementById('comp-name').value.trim();
     const phone = document.getElementById('comp-phone').value.trim();
@@ -743,13 +1165,12 @@
     const btnJ = document.getElementById('btn-jadwal');
     const inJ = document.getElementById('f-waktu-jadwal');
     
+    btnL.classList.toggle('active', waktu === 'Langsung');
+    btnJ.classList.toggle('active', waktu === 'Jadwalkan');
+    
     if(waktu === 'Langsung') {
-      btnL.style.borderColor = 'var(--md-primary)'; btnL.style.color = 'var(--md-primary)';
-      btnJ.style.borderColor = 'var(--md-outline)'; btnJ.style.color = 'var(--md-on-surface)';
       inJ.classList.add('d-none');
     } else {
-      btnJ.style.borderColor = 'var(--md-primary)'; btnJ.style.color = 'var(--md-primary)';
-      btnL.style.borderColor = 'var(--md-outline)'; btnL.style.color = 'var(--md-on-surface)';
       inJ.classList.remove('d-none');
     }
   }
@@ -765,6 +1186,7 @@
     }, () => { showToast('Gagal Akses GPS, pastikan izin diaktifkan.'); });
   }
 
+  // LOGIKA PERHITUNGAN ARGO DARI FILE UTAMA
   window.calculateArgoManual = function() {
     const distInput = document.getElementById('f-distance').value;
     const distKm = parseFloat(distInput);
@@ -904,14 +1326,12 @@
      window.open('https://wa.me/6285138238914?text=' + encodeURIComponent(textWA), '_blank');
   }
 
-  // PERBAIKAN FUNGSI RENDER PROSES (CLEAN UI & GIF)
   window.renderProses = function() {
     const container = document.getElementById('proses-results');
     const dancingGif = document.getElementById('dancing-container');
     
-    // Logic untuk memunculkan GIF menggunakan manipulasi style langsung (bulletproof)
     if(window.activeOrdersData.length === 0) {
-      container.innerHTML = '<p style="text-align:center; color:gray; padding: 20px;">Tidak ada pesanan yang sedang diproses.</p>';
+      container.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">inbox</span><p>Tidak ada pesanan yang sedang diproses.</p></div>`;
       dancingGif.style.display = 'none';
       hasPlayedProcessSound = false;
       return;
@@ -928,77 +1348,83 @@
       let isDiproses = o.status === 'diproses';
       let isMenunggu = o.status === 'menunggu';
       const estimasiWaktu = (o.type === 'Jastip resto/toko') ? '45 Menit' : '30 Menit';
+      const fillPct = isDiproses ? '65%' : '15%';
 
-      // HTML Card Lebih Ringkas dan Rapi
       htmlContent += `
-        <div class="card" id="card-${o.id}" style="padding-bottom:12px;">
-          
-          <div onclick="window.toggleDetail('${o.id}')" style="cursor:pointer;">
-             <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px;">
-                <div>
-                  <div style="font-size:16px; font-weight:700; color:var(--md-primary);">${o.orderNo}</div>
-                  <div style="font-size:12px; color:var(--md-on-surface-variant); margin-top:2px;">${o.type}</div>
-                </div>
-                <div style="text-align:right;">
-                   <span class="order-timer" data-time="${o.uploadedAt}" style="font-size:11px; color:var(--md-on-surface-variant); display:block;">00:00 berlalu</span>
-                   <span style="font-size:11px; font-weight:700; color:var(--md-primary); background:var(--md-primary-light); padding: 2px 6px; border-radius: 4px; display:inline-block; margin-top:4px;">Est: ${estimasiWaktu}</span>
-                </div>
-             </div>
-             
-             <div class="timeline-container" style="margin: 20px 0 12px;">
-                <div class="timeline-track">
-                   <div class="timeline-segment ${isMenunggu ? 'anim-flow' : 'solid-flow'}"></div>
-                   <div class="timeline-segment ${isDiproses ? 'anim-flow' : ''}"></div>
-                </div>
-                <div class="timeline-step ${isMenunggu ? 'active' : 'done'}">
-                   <div class="timeline-circle"><span class="material-symbols-outlined">schedule</span></div>
-                   <div class="timeline-label">Menunggu</div>
-                </div>
-                <div class="timeline-step ${isDiproses ? 'active' : ''}">
-                   <div class="timeline-circle"><span class="material-symbols-outlined">two_wheeler</span></div>
-                   <div class="timeline-label">Di Jalan</div>
-                </div>
-                <div class="timeline-step">
-                   <div class="timeline-circle"><span class="material-symbols-outlined">check_circle</span></div>
-                   <div class="timeline-label">Selesai</div>
-                </div>
-             </div>
-
-             <div style="text-align:center; margin-top:-8px; color:var(--md-on-surface-variant); font-size:12px; display:flex; justify-content:center; align-items:center;">
-                <span id="icon-expand-${o.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span> Detail Pesanan
-             </div>
+        <div class="order-card" id="card-${o.id}">
+          <div class="order-card-header" onclick="window.toggleDetail('${o.id}')">
+            <div>
+              <div class="order-card-num">${o.orderNo}</div>
+              <div class="order-card-type">${o.type}</div>
+            </div>
+            <div class="order-card-right">
+              <div class="order-timer-pill order-timer" data-time="${o.uploadedAt}">00:00 berlalu</div>
+              <div class="est-pill">Est: ${estimasiWaktu}</div>
+            </div>
           </div>
 
-          <div id="detail-${o.id}" class="d-none" style="margin-top:12px; padding-top:12px; border-top:1px solid var(--md-outline);">
-              <div style="font-size:13px; background:var(--md-surface-3); padding:12px; border-radius:8px; line-height: 1.6; color:var(--md-on-surface);">
-                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                     <span><b>Argo/Biaya:</b></span> <span style="color:var(--md-primary); font-weight:700;">Rp ${(o.fare || 0).toLocaleString('id-ID')}</span>
-                  </div>
-                  <b>Kontak:</b> ${o.contactName} (${o.contactWA})<br>
-                  <b>Ambil:</b> ${o.pickupDetail || o.pickupAddress}<br>
-                  <b>Antar:</b> ${o.deliveryDetail || o.deliveryAddress}<br>
-                  ${o.catatan ? `<b>Catatan:</b> ${o.catatan}` : ''}
+          <div class="order-card-body">
+            <div class="timeline-uber">
+              <div class="tl-track">
+                <div class="tl-fill" style="width:${fillPct};"></div>
               </div>
-              
-              <div class="action-btns-grid">
-                ${isMenunggu ? `
-                  <button class="btn-primary" style="background:#25D366;" onclick="window.ingatkanDriver('${o.id}')">
-                     <span class="material-symbols-outlined">notifications_active</span> Ingatkan Driver (WA)
-                  </button>
-                ` : ''}
+              <div class="tl-step ${isMenunggu ? 'active' : 'done'}">
+                <div class="tl-dot"><span class="material-symbols-outlined">schedule</span></div>
+                <div class="tl-label">Menunggu</div>
+              </div>
+              <div class="tl-step ${isDiproses ? 'active' : ''}">
+                <div class="tl-dot"><span class="material-symbols-outlined">two_wheeler</span></div>
+                <div class="tl-label">Di Jalan</div>
+              </div>
+              <div class="tl-step">
+                <div class="tl-dot"><span class="material-symbols-outlined">check_circle</span></div>
+                <div class="tl-label">Selesai</div>
+              </div>
+            </div>
 
-                ${isDiproses ? `
-                  <a href="https://wa.me/6285138238914" target="_blank" class="btn-primary" style="background:#25D366; text-decoration:none;">
-                     <span class="material-symbols-outlined">chat</span> Hubungi Driver
-                  </a>
-                ` : ''}
+            <button class="toggle-detail-btn" onclick="window.toggleDetail('${o.id}')">
+              <span id="icon-expand-${o.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span>
+              Detail Pesanan
+            </button>
+          </div>
 
-                <button class="btn-primary" onclick="window.selesaiOrder('${o.id}')" ${!isDiproses ? 'disabled title="Menunggu driver"' : ''}>
-                   <span class="material-symbols-outlined">task_alt</span> Konfirmasi Pesanan Selesai
+          <div id="detail-${o.id}" class="order-detail-panel d-none">
+            <div class="detail-grid">
+              <div class="detail-row">
+                <span class="detail-key">Argo/Biaya</span>
+                <span class="detail-val" style="color:var(--green);font-size:16px;">Rp ${(o.fare || 0).toLocaleString('id-ID')}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-key">Kontak</span>
+                <span class="detail-val">${o.contactName} (${o.contactWA})</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-key">Ambil</span>
+                <span class="detail-val">${o.pickupDetail || o.pickupAddress}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-key">Antar</span>
+                <span class="detail-val">${o.deliveryDetail || o.deliveryAddress}</span>
+              </div>
+              ${o.catatan ? `<div class="detail-row"><span class="detail-key">Catatan</span><span class="detail-val">${o.catatan}</span></div>` : ''}
+            </div>
+
+            <div class="action-btns-grid">
+              ${isMenunggu ? `
+                <button class="btn-green" onclick="window.ingatkanDriver('${o.id}')">
+                  <span class="material-symbols-outlined">notifications_active</span> Ingatkan Driver (WA)
                 </button>
-              </div>
+              ` : ''}
+              ${isDiproses ? `
+                <a href="https://wa.me/6285138238914" target="_blank" class="btn-green">
+                  <span class="material-symbols-outlined">chat</span> Hubungi Driver
+                </a>
+              ` : ''}
+              <button class="btn-primary" onclick="window.selesaiOrder('${o.id}')" ${!isDiproses ? 'disabled title="Menunggu driver"' : ''}>
+                <span class="material-symbols-outlined">task_alt</span> Konfirmasi Pesanan Selesai
+              </button>
+            </div>
           </div>
-
         </div>
       `;
     });
@@ -1036,7 +1462,6 @@
     }
   }
 
-  // PERBAIKAN UI RIWAYAT (Lebih Profesional)
   window.renderArchive = function() {
     const searchVal = document.getElementById('search-input').value.toLowerCase();
     const results = document.getElementById('archive-results');
@@ -1044,7 +1469,7 @@
     let filtered = window.historyOrdersData.filter(e => e.contactName && e.contactName.toLowerCase().includes(searchVal));
 
     if (!filtered.length) { 
-       results.innerHTML = '<p style="text-align:center; color:gray; padding: 20px;">Tidak ada riwayat ditemukan.</p>'; 
+       results.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">receipt_long</span><p>Tidak ada riwayat ditemukan.</p></div>`;
        return; 
     }
 
@@ -1054,19 +1479,16 @@
       
       htmlContent += `
         <div class="archive-card">
-          <div class="archive-header">
-            <div class="archive-title">
-               <span class="material-symbols-outlined" style="font-size:18px; color:var(--md-primary)">${iconType}</span>
-               ${entry.contactName}
-            </div>
-            <div class="archive-date">${new Date(entry.uploadedAt).toLocaleDateString('id-ID')}</div>
+          <div class="archive-icon-wrap">
+            <span class="material-symbols-outlined">${iconType}</span>
           </div>
-          <div class="archive-body">
-             <div style="display:flex; gap:6px;">
-                <span class="badge" style="background:var(--md-primary-light); color:var(--md-primary);">${entry.distanceKm || 0} KM</span>
-                <span class="badge" style="background:#E6F4EA; color:#137333;">Selesai</span>
-             </div>
-             <div class="archive-price">Rp ${(entry.fare || 0).toLocaleString('id-ID')}</div>
+          <div class="archive-info">
+            <div class="archive-name">${entry.contactName}</div>
+            <div class="archive-meta">${entry.type} · ${entry.distanceKm || 0} KM · ${new Date(entry.uploadedAt).toLocaleDateString('id-ID')}</div>
+          </div>
+          <div class="archive-right">
+            <div class="archive-price">Rp ${(entry.fare || 0).toLocaleString('id-ID')}</div>
+            <div class="archive-badge">Selesai</div>
           </div>
         </div>`;
     });
