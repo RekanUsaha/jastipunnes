@@ -39,6 +39,7 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ─── PREVENT COPY / SELECTION ─── */
   body {
     font-family: var(--font);
     background: var(--gray-100);
@@ -46,6 +47,20 @@
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    
+    /* Mencegah seleksi teks */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Mengizinkan seleksi pada input dan textarea */
+  input, textarea {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
   }
 
   .d-none { display: none !important; }
@@ -913,6 +928,17 @@
   window.isRegistering = false; 
   window.waktuType = 'Langsung';
 
+  // EVENT LISTENER MENCEGAH COPY / CUT / KLIK KANAN
+  document.addEventListener('contextmenu', function(e) {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') { e.preventDefault(); }
+  });
+  document.addEventListener('copy', function(e) {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') { e.preventDefault(); }
+  });
+  document.addEventListener('cut', function(e) {
+    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') { e.preventDefault(); }
+  });
+
   document.addEventListener('click', function(e) {
     const isClickable = e.target.closest('.chip, .nav-item, .auth-tab, .order-card-header, .btn-primary, .btn-secondary, .btn-green, .icon-btn, .btn-waktu, .driver-card');
     if (isClickable || e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
@@ -1192,7 +1218,8 @@
     else document.getElementById('f-waktu-jadwal').classList.remove('d-none');
   }
 
-  window.openGoogleMaps = function() { window.open('https://maps.google.com', '_blank'); }
+  // MENGUBAH URL HTTP KE HTTPS AGAR AMAN
+  window.openGoogleMaps = function() { window.open('https://www.google.com/maps', '_blank'); }
 
   window.getLocation = function(targetId) {
     if (!navigator.geolocation) { showToast('GPS tidak didukung browser ini'); return; }
@@ -1257,12 +1284,11 @@
     }
   };
 
-  // Helper function extract coordinate for map animation
   function extractCoords(str) {
       const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
       const match = str.match(regex);
       if (match) {
-          return [parseFloat(match[2]), parseFloat(match[1])]; // MapLibre needs [lng, lat]
+          return [parseFloat(match[2]), parseFloat(match[1])]; 
       }
       return null;
   }
@@ -1299,7 +1325,6 @@
       showToast('Harap pilih jam dan tanggal jika memilih Jadwalkan.'); return;
     }
 
-    // Pembuatan order lokal ke pending array (Tahan selama 20 detik sebelum dikirim)
     const localId = 'temp-' + Date.now();
     const newOrder = {
       id: localId,
@@ -1316,7 +1341,6 @@
     window.localPendingOrders.push(newOrder);
     document.getElementById('sfx-create').play().catch(e => console.log(e));
 
-    // Clear input
     ['f-pickup-loc','f-pickup-detail','f-delivery-loc','f-delivery-detail','f-catatan','f-waktu-jadwal','f-penerima-nama','f-penerima-wa','f-pengirim-nama','f-pengirim-wa','f-distance'].forEach(id => {
        if (document.getElementById(id)) document.getElementById(id).value = '';
     });
@@ -1330,7 +1354,6 @@
     window.switchPage('proses');
     showToast('Pesanan Diproses...');
 
-    // Simulasi penyimpanan 20 detik
     setTimeout(async () => {
         const orderIdx = window.localPendingOrders.findIndex(o => o.id === localId);
         if (orderIdx !== -1) {
@@ -1344,7 +1367,6 @@
             try {
                 const docRef = await addDoc(collection(db, "orders"), orderToUpload);
                 
-                // Auto update status dari menunggu lalu diproses (Simulasi Server/Driver 10 detik setelah order disimpan)
                 setTimeout(() => {
                     getDoc(docRef).then(snap => {
                         if(snap.exists() && snap.data().status === 'menunggu') updateDoc(docRef, { status: 'diproses' });
@@ -1371,7 +1393,6 @@
       window.activeOrdersData = allOrders.filter(o => o.status !== 'selesai' && o.status !== 'dibatalkan');
       window.historyOrdersData = allOrders.filter(o => o.status === 'selesai' || o.status === 'dibatalkan');
       
-      // Ringtone aktif saat status pindah ke 'diproses' (Di Jalan)
       window.activeOrdersData.forEach(o => {
         if (o.status === 'diproses' && !diprosesSet.has(o.id)) {
             diprosesSet.add(o.id);
@@ -1392,7 +1413,6 @@
      const iconElem = document.getElementById('icon-expand-' + id);
      if (detailElem.classList.contains('d-none')) {
          detailElem.classList.remove('d-none'); iconElem.textContent = 'expand_less';
-         // Memperbaiki masalah maplibre rendering di elemen yang awalnya di-hide
          setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 100);
      } else {
          detailElem.classList.add('d-none'); iconElem.textContent = 'expand_more';
@@ -1411,7 +1431,6 @@
      if(!confirm('Yakin ingin membatalkan pesanan ini?')) return;
      showLoading('Membatalkan...');
      
-     // Jika pesanan masih berstatus local_pending, tinggal dibuang saja dari array tanpa akses Firebase
      if (id.startsWith('temp-')) {
          window.localPendingOrders = window.localPendingOrders.filter(o => o.id !== id);
          window.renderProses();
@@ -1431,7 +1450,6 @@
     const container = document.getElementById('proses-results');
     const dancingGif = document.getElementById('dancing-container');
     
-    // Gabung data yang belum masuk Firebase dan yang dari Firebase
     const combinedOrders = [...window.localPendingOrders, ...window.activeOrdersData];
     
     if(combinedOrders.length === 0) {
@@ -1520,7 +1538,6 @@
     container.innerHTML = htmlContent; 
     window.updateTimers(); 
     
-    // Inisialisasi peta MapLibre GL untuk status diproses
     setTimeout(() => {
         combinedOrders.forEach(o => {
             if (o.status === 'diproses') {
@@ -1530,10 +1547,9 @@
                     mapEl.dataset.initialized = "true";
                     
                     let dest = extractCoords(o.deliveryAddress) || extractCoords(o.pickupAddress);
-                    if (!dest) dest = [110.421, -6.982]; // Koordinat Semarang Default
+                    if (!dest) dest = [110.421, -6.982]; 
                     
                     let start = extractCoords(o.pickupAddress);
-                    // Jika map asal berbentuk link, kalkulasi simulasi titik point keberangkatan
                     if (!start || (start[0]===dest[0] && start[1]===dest[1])) {
                         start = [dest[0] - 0.012, dest[1] + 0.012]; 
                     }
@@ -1558,9 +1574,8 @@
                         const bounds = new maplibregl.LngLatBounds(start, start).extend(dest);
                         map.fitBounds(bounds, { padding: 30, maxZoom: 15 });
 
-                        // Animasi bergeraknya motor ke tujuan
                         let startTime = performance.now();
-                        const duration = 25000; // 25 detik loop animasi tiba 
+                        const duration = 25000; 
                         function animateMarker(time) {
                             let progress = (time - startTime) / duration;
                             if (progress > 1) progress = 1;
