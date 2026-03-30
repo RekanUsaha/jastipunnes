@@ -7,6 +7,9 @@
 <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063822.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+<link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+<script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
 <style>
   :root {
     --black: #000000;
@@ -898,6 +901,7 @@
   let currentUserData = null;
   let selectedType = 'Jastip resto/toko';
   
+  window.localPendingOrders = [];
   window.activeOrdersData = [];
   window.historyOrdersData = [];
   let unsubscribeOrders = null;
@@ -1253,6 +1257,16 @@
     }
   };
 
+  // Helper function extract coordinate for map animation
+  function extractCoords(str) {
+      const regex = /(-?\d+\.\d+),\s*(-?\d+\.\d+)/;
+      const match = str.match(regex);
+      if (match) {
+          return [parseFloat(match[2]), parseFloat(match[1])]; // MapLibre needs [lng, lat]
+      }
+      return null;
+  }
+
   window.doUpload = async function() {
     let activeGpsId = selectedType === 'Kirim Instan' ? 'f-pickup-loc' : 'f-delivery-loc';
     let gpsInput = document.getElementById(activeGpsId);
@@ -1285,50 +1299,63 @@
       showToast('Harap pilih jam dan tanggal jika memilih Jadwalkan.'); return;
     }
 
-    showLoading('Menyimpan Data Pesanan...');
+    // Pembuatan order lokal ke pending array (Tahan selama 20 detik sebelum dikirim)
+    const localId = 'temp-' + Date.now();
+    const newOrder = {
+      id: localId,
+      orderNo: "JSTP-" + Date.now().toString().slice(-6), type: selectedType,
+      pickupAddress: pickupLoc, pickupDetail: pickupDetail,
+      deliveryAddress: delivLoc, deliveryDetail: delivDetail,
+      catatan: catatan, waktuTipe: window.waktuType, waktuJadwal: waktuJadwal,
+      contactName: contactName, contactWA: contactWA,
+      distanceKm: window.currentOrderDist, fare: window.currentOrderFare,
+      uploadedAt: new Date().toISOString(), uploader: currentUserUid, 
+      status: 'local_pending', pendingUntil: Date.now() + 20000 
+    };
+
+    window.localPendingOrders.push(newOrder);
+    document.getElementById('sfx-create').play().catch(e => console.log(e));
+
+    // Clear input
+    ['f-pickup-loc','f-pickup-detail','f-delivery-loc','f-delivery-detail','f-catatan','f-waktu-jadwal','f-penerima-nama','f-penerima-wa','f-pengirim-nama','f-pengirim-wa','f-distance'].forEach(id => {
+       if (document.getElementById(id)) document.getElementById(id).value = '';
+    });
+    window.currentOrderDist = null; window.currentOrderFare = null;
+    document.getElementById('display-fare').textContent = 'Rp 0';
+    document.getElementById('f-pickup-loc-accuracy').classList.add('d-none');
+    document.getElementById('f-delivery-loc-accuracy').classList.add('d-none');
+    gpsInput.dataset.valid = "true";
+    window.setWaktu('Langsung'); 
     
-    try {
-      const newOrder = {
-        orderNo: "JSTP-" + Date.now().toString().slice(-6), type: selectedType,
-        pickupAddress: pickupLoc, pickupDetail: pickupDetail,
-        deliveryAddress: delivLoc, deliveryDetail: delivDetail,
-        catatan: catatan, waktuTipe: window.waktuType, waktuJadwal: waktuJadwal,
-        contactName: contactName, contactWA: contactWA,
-        distanceKm: window.currentOrderDist, fare: window.currentOrderFare,
-        uploadedAt: new Date().toISOString(), uploader: currentUserUid, 
-        status: 'pending', pendingUntil: Date.now() + 20000 
-      };
+    window.switchPage('proses');
+    showToast('Pesanan Diproses...');
 
-      const docRef = await addDoc(collection(db, "orders"), newOrder);
-      document.getElementById('sfx-create').play().catch(e => console.log(e));
-
-      // Auto update status dari pending ke menunggu lalu diproses (Simulasi Server/Driver)
-      setTimeout(() => {
-         getDoc(docRef).then(snap => {
-            if(snap.exists() && snap.data().status === 'pending') {
-               updateDoc(docRef, { status: 'menunggu' });
-               setTimeout(() => {
-                 getDoc(docRef).then(s => {
-                   if(s.exists() && s.data().status === 'menunggu') updateDoc(docRef, { status: 'diproses' });
-                 });
-               }, 10000);
+    // Simulasi penyimpanan 20 detik
+    setTimeout(async () => {
+        const orderIdx = window.localPendingOrders.findIndex(o => o.id === localId);
+        if (orderIdx !== -1) {
+            const orderToUpload = {...window.localPendingOrders[orderIdx]};
+            delete orderToUpload.id; 
+            orderToUpload.status = 'menunggu'; 
+            orderToUpload.uploadedAt = new Date().toISOString(); 
+            
+            window.localPendingOrders.splice(orderIdx, 1);
+            
+            try {
+                const docRef = await addDoc(collection(db, "orders"), orderToUpload);
+                
+                // Auto update status dari menunggu lalu diproses (Simulasi Server/Driver 10 detik setelah order disimpan)
+                setTimeout(() => {
+                    getDoc(docRef).then(snap => {
+                        if(snap.exists() && snap.data().status === 'menunggu') updateDoc(docRef, { status: 'diproses' });
+                    });
+                }, 10000);
+                
+            } catch(e) {
+                showToast('Gagal Simpan Pesanan: ' + e.message);
             }
-         });
-      }, 20000);
-
-      ['f-pickup-loc','f-pickup-detail','f-delivery-loc','f-delivery-detail','f-catatan','f-waktu-jadwal','f-penerima-nama','f-penerima-wa','f-pengirim-nama','f-pengirim-wa','f-distance'].forEach(id => {
-         if (document.getElementById(id)) document.getElementById(id).value = '';
-      });
-      window.currentOrderDist = null; window.currentOrderFare = null;
-      document.getElementById('display-fare').textContent = 'Rp 0';
-      document.getElementById('f-pickup-loc-accuracy').classList.add('d-none');
-      document.getElementById('f-delivery-loc-accuracy').classList.add('d-none');
-      gpsInput.dataset.valid = "true";
-      window.setWaktu('Langsung'); 
-      
-      hideLoading(); showToast('Pesanan Berhasil Dibuat');
-      window.switchPage('proses');
-    } catch (error) { hideLoading(); showToast('Gagal Simpan: ' + error.message); }
+        }
+    }, 20000);
   }
 
   function subscribeOrders() {
@@ -1365,13 +1392,16 @@
      const iconElem = document.getElementById('icon-expand-' + id);
      if (detailElem.classList.contains('d-none')) {
          detailElem.classList.remove('d-none'); iconElem.textContent = 'expand_less';
+         // Memperbaiki masalah maplibre rendering di elemen yang awalnya di-hide
+         setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 100);
      } else {
          detailElem.classList.add('d-none'); iconElem.textContent = 'expand_more';
      }
   }
 
   window.ingatkanDriver = function(id) {
-     const order = window.activeOrdersData.find(o => o.id === id);
+     const combinedOrders = [...window.localPendingOrders, ...window.activeOrdersData];
+     const order = combinedOrders.find(o => o.id === id);
      if(!order) return;
      const textWA = `*Halo, mohon segera proses pesanan saya!*\nKategori: ${order.type}\nLokasi Pengambilan: ${order.pickupAddress} ${order.pickupDetail ? '('+order.pickupDetail+')' : ''}\nLokasi Pengiriman: ${order.deliveryAddress} ${order.deliveryDetail ? '('+order.deliveryDetail+')' : ''}\nCatatan: ${order.catatan || '-'}\nData Penerima: ${order.contactName} - ${order.contactWA}\nArgo: Rp ${(order.fare || 0).toLocaleString('id-ID')}\n\nTolong segera direspons, terima kasih!`;
      window.open('https://wa.me/6285138238914?text=' + encodeURIComponent(textWA), '_blank');
@@ -1380,6 +1410,16 @@
   window.batalOrder = async function(id) {
      if(!confirm('Yakin ingin membatalkan pesanan ini?')) return;
      showLoading('Membatalkan...');
+     
+     // Jika pesanan masih berstatus local_pending, tinggal dibuang saja dari array tanpa akses Firebase
+     if (id.startsWith('temp-')) {
+         window.localPendingOrders = window.localPendingOrders.filter(o => o.id !== id);
+         window.renderProses();
+         hideLoading();
+         showToast('Pesanan dibatalkan');
+         return;
+     }
+
      try {
        await updateDoc(doc(db, "orders", id), { status: 'dibatalkan' });
        showToast('Pesanan dibatalkan');
@@ -1391,7 +1431,10 @@
     const container = document.getElementById('proses-results');
     const dancingGif = document.getElementById('dancing-container');
     
-    if(window.activeOrdersData.length === 0) {
+    // Gabung data yang belum masuk Firebase dan yang dari Firebase
+    const combinedOrders = [...window.localPendingOrders, ...window.activeOrdersData];
+    
+    if(combinedOrders.length === 0) {
       container.innerHTML = `<div class="empty-state"><span class="material-symbols-outlined">inbox</span><p>Tidak ada pesanan yang sedang diproses.</p></div>`;
       dancingGif.style.display = 'none'; return;
     }
@@ -1399,8 +1442,8 @@
     dancingGif.style.display = 'block';
 
     let htmlContent = '';
-    window.activeOrdersData.forEach(o => {
-      let isPending = o.status === 'pending';
+    combinedOrders.forEach(o => {
+      let isLocalPending = o.status === 'local_pending';
       let isMenunggu = o.status === 'menunggu';
       let isDiproses = o.status === 'diproses';
       
@@ -1410,7 +1453,7 @@
       let pendingHtml = '';
       let timelineHtml = '';
 
-      if (isPending) {
+      if (isLocalPending) {
          pendingHtml = `
            <div class="pending-container" style="text-align:center; padding: 14px 0;">
              <div class="spinner-amber" style="margin: 0 auto 10px;"></div>
@@ -1434,13 +1477,13 @@
           <div class="order-card-header" onclick="window.toggleDetail('${o.id}')">
             <div><div class="order-card-num">${o.orderNo}</div><div class="order-card-type">${o.type}</div></div>
             <div class="order-card-right">
-              <div class="order-timer-pill order-timer" data-time="${o.uploadedAt}">00:00 berlalu</div>
-              <div class="est-pill">Est: ${estimasiWaktu}</div>
+              ${!isLocalPending ? `<div class="order-timer-pill order-timer" data-time="${o.uploadedAt}">00:00 berlalu</div>` : ''}
+              ${isDiproses ? `<div class="est-pill">Est: ${estimasiWaktu}</div>` : ''}
             </div>
           </div>
           <div class="order-card-body">
-            ${isPending ? pendingHtml : timelineHtml}
-            <button class="toggle-detail-btn" onclick="window.toggleDetail('${o.id}')" style="margin-top: ${isPending ? '10px' : '0'};">
+            ${isLocalPending ? pendingHtml : timelineHtml}
+            <button class="toggle-detail-btn" onclick="window.toggleDetail('${o.id}')" style="margin-top: ${isLocalPending ? '10px' : '0'};">
               <span id="icon-expand-${o.id}" class="material-symbols-outlined" style="font-size:18px;">expand_more</span> Detail Pesanan
             </button>
           </div>
@@ -1456,6 +1499,7 @@
                 </div>
                 <span class="material-symbols-outlined" style="color:var(--gray-400)">chevron_right</span>
               </div>
+              <div id="map-container-${o.id}" style="height: 180px; width: 100%; border-radius: 8px; margin-bottom: 14px; border: 1px solid var(--gray-200); position: relative; overflow: hidden;"></div>
             ` : ''}
             <div class="detail-grid">
               <div class="detail-row"><span class="detail-key">Argo/Biaya</span><span class="detail-val" style="color:var(--green);font-size:16px;">Rp ${(o.fare || 0).toLocaleString('id-ID')}</span></div>
@@ -1473,7 +1517,68 @@
         </div>
       `;
     });
-    container.innerHTML = htmlContent; window.updateTimers(); 
+    container.innerHTML = htmlContent; 
+    window.updateTimers(); 
+    
+    // Inisialisasi peta MapLibre GL untuk status diproses
+    setTimeout(() => {
+        combinedOrders.forEach(o => {
+            if (o.status === 'diproses') {
+                const mapId = 'map-container-' + o.id;
+                const mapEl = document.getElementById(mapId);
+                if (mapEl && !mapEl.dataset.initialized) {
+                    mapEl.dataset.initialized = "true";
+                    
+                    let dest = extractCoords(o.deliveryAddress) || extractCoords(o.pickupAddress);
+                    if (!dest) dest = [110.421, -6.982]; // Koordinat Semarang Default
+                    
+                    let start = extractCoords(o.pickupAddress);
+                    // Jika map asal berbentuk link, kalkulasi simulasi titik point keberangkatan
+                    if (!start || (start[0]===dest[0] && start[1]===dest[1])) {
+                        start = [dest[0] - 0.012, dest[1] + 0.012]; 
+                    }
+
+                    try {
+                        const map = new maplibregl.Map({
+                            container: mapId,
+                            style: 'https://tiles.openfreemap.org/styles/bright',
+                            center: start,
+                            zoom: 14,
+                            attributionControl: false
+                        });
+
+                        const el = document.createElement('div');
+                        el.innerHTML = '<span class="material-symbols-outlined" style="color:var(--green-dark); font-size:32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));">two_wheeler</span>';
+                        el.style.width = '32px'; el.style.height = '32px';
+
+                        const marker = new maplibregl.Marker({ element: el })
+                            .setLngLat(start)
+                            .addTo(map);
+
+                        const bounds = new maplibregl.LngLatBounds(start, start).extend(dest);
+                        map.fitBounds(bounds, { padding: 30, maxZoom: 15 });
+
+                        // Animasi bergeraknya motor ke tujuan
+                        let startTime = performance.now();
+                        const duration = 25000; // 25 detik loop animasi tiba 
+                        function animateMarker(time) {
+                            let progress = (time - startTime) / duration;
+                            if (progress > 1) progress = 1;
+                            
+                            const lng = start[0] + (dest[0] - start[0]) * progress;
+                            const lat = start[1] + (dest[1] - start[1]) * progress;
+                            
+                            marker.setLngLat([lng, lat]);
+                            if (progress < 1) {
+                                requestAnimationFrame(animateMarker);
+                            }
+                        }
+                        requestAnimationFrame(animateMarker);
+                    } catch(e) { console.log('Gagal render map: ', e); }
+                }
+            }
+        });
+    }, 300);
   }
 
   window.updateTimers = function() {
