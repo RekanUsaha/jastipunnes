@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>JastipUnnes</title>
+<link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063822.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 <style>
@@ -389,6 +390,21 @@
   .order-detail-panel {
     border-top: 1px solid var(--gray-200); padding: 14px 18px 18px;
   }
+  
+  /* DRIVER CARD UI */
+  .driver-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; background: var(--gray-100);
+    border-radius: var(--radius-md); margin-bottom: 14px;
+    cursor: pointer; transition: background 0.2s;
+    border: 1px solid var(--gray-200);
+  }
+  .driver-card:active { background: var(--gray-200); }
+  .driver-card img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background:var(--white); padding:2px; border: 1px solid var(--gray-300);}
+  .driver-info { flex: 1; }
+  .driver-name { font-size: 14px; font-weight: 700; color: var(--black); }
+  .driver-rating { font-size: 12px; font-weight: 600; color: var(--gray-500); margin-top: 2px; }
+  
   .detail-grid {
     background: var(--gray-100); border-radius: var(--radius-md);
     padding: 14px; font-size: 13px; line-height: 1.7;
@@ -589,8 +605,10 @@
 </head>
 <body>
 
+<audio id="sfx-click" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
 <audio id="sfx-create" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
 <audio id="sfx-process" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3" preload="auto"></audio>
+<audio id="sfx-complete" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" preload="auto"></audio>
 
 <div id="loading-overlay">
   <div class="spinner"></div>
@@ -654,6 +672,38 @@
     <button class="btn-primary" onclick="window.saveCompleteProfile()">Simpan & Lanjutkan</button>
   </div>
 </div>
+
+<div class="modal-overlay" id="driver-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Info Driver</div>
+    <div class="text-center" style="margin-bottom:20px;">
+      <div class="avatar-big-wrap" style="border:none;">
+        <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Driver">
+      </div>
+      <h3 style="font-size: 18px; margin-bottom: 4px;">Budi Santoso</h3>
+      <div style="font-size: 13px; color: var(--gray-500); font-weight: 600;">⭐ 4.9 Rating</div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-row">
+        <span class="detail-key">Nomor HP / WA</span>
+        <span class="detail-val">+62 851-3823-8914</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Bergabung Sejak</span>
+        <span class="detail-val">Agustus 2023</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-key">Kendaraan</span>
+        <span class="detail-val">Honda Vario (H 1234 XX)</span>
+      </div>
+    </div>
+    <div style="margin-top:20px;">
+      <button class="btn-primary" onclick="window.closeDriverModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
 
 <div id="splash">
   <div class="splash-hero">
@@ -891,6 +941,18 @@
   window.waktuType = 'Langsung';
   let hasPlayedProcessSound = false; 
 
+  // --- AUDIO LISTENER GLOBAL UNTUK TOMBOL ---
+  document.addEventListener('click', function(e) {
+    const isClickable = e.target.closest('.chip, .nav-item, .auth-tab, .order-card-header, .btn-primary, .btn-secondary, .btn-green, .icon-btn, .btn-waktu, .driver-card');
+    if (isClickable || e.target.tagName === 'BUTTON' || e.target.tagName === 'A') {
+        const clickSfx = document.getElementById('sfx-click');
+        if (clickSfx) {
+            clickSfx.currentTime = 0;
+            clickSfx.play().catch(err => console.log('Sfx pop diblokir', err));
+        }
+    }
+  });
+
   function showLoading(text) {
     document.getElementById('loading-text').textContent = text;
     document.getElementById('loading-overlay').classList.add('visible');
@@ -1045,9 +1107,10 @@
     document.getElementById('profile-modal').classList.add('open');
   }
 
-  window.closeProfileModal = function() {
-    document.getElementById('profile-modal').classList.remove('open');
-  }
+  window.closeProfileModal = function() { document.getElementById('profile-modal').classList.remove('open'); }
+  
+  window.showDriverModal = function() { document.getElementById('driver-modal').classList.add('open'); }
+  window.closeDriverModal = function() { document.getElementById('driver-modal').classList.remove('open'); }
 
   window.previewAvatar = function(event) {
     const file = event.target.files[0];
@@ -1186,7 +1249,6 @@
     }, () => { showToast('Gagal Akses GPS, pastikan izin diaktifkan.'); });
   }
 
-  // LOGIKA PERHITUNGAN ARGO DARI FILE UTAMA
   window.calculateArgoManual = function() {
     const distInput = document.getElementById('f-distance').value;
     const distKm = parseFloat(distInput);
@@ -1306,7 +1368,6 @@
     }, (error) => { console.error("Gagal menarik data pesanan:", error); });
   }
 
-  // TAMPILKAN ATAU SEMBUNYIKAN DETAIL PESANAN
   window.toggleDetail = function(id) {
      const detailElem = document.getElementById('detail-' + id);
      const iconElem = document.getElementById('icon-expand-' + id);
@@ -1338,8 +1399,12 @@
     }
 
     dancingGif.style.display = 'block';
-    if (!hasPlayedProcessSound) {
-      document.getElementById('sfx-process').play().catch(e => console.log(e));
+    
+    // Suara Proses jika pesanan ada dan belum dimainkan
+    const adaDiproses = window.activeOrdersData.some(o => o.status === 'diproses');
+    if (adaDiproses && !hasPlayedProcessSound) {
+      const audioProcess = document.getElementById('sfx-process');
+      if(audioProcess) audioProcess.play().catch(e => console.log(e));
       hasPlayedProcessSound = true;
     }
 
@@ -1389,6 +1454,18 @@
           </div>
 
           <div id="detail-${o.id}" class="order-detail-panel d-none">
+            
+            ${isDiproses ? `
+              <div class="driver-card" onclick="window.showDriverModal()">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Driver">
+                <div class="driver-info">
+                  <div class="driver-name">Budi Santoso</div>
+                  <div class="driver-rating">⭐ 4.9 (120+ order)</div>
+                </div>
+                <span class="material-symbols-outlined" style="color:var(--gray-400)">chevron_right</span>
+              </div>
+            ` : ''}
+
             <div class="detail-grid">
               <div class="detail-row">
                 <span class="detail-key">Argo/Biaya</span>
@@ -1453,6 +1530,10 @@
     showLoading('Menyelesaikan pesanan...');
     try {
       await updateDoc(doc(db, "orders", id), { status: 'selesai' });
+      // Mainkan suara sukses selesai
+      const audioComplete = document.getElementById('sfx-complete');
+      if(audioComplete) audioComplete.play().catch(e => console.log(e));
+      
       showToast('Pesanan selesai & dipindahkan ke Riwayat');
     } catch(e) { 
       console.error(e);
